@@ -59,7 +59,6 @@ function draw()
     ++framecount;
     tdl.webgl.requestAnimationFrame(draw, canvas);
     var rotationmatrix=new Float32Array(16);
-    var temppi=new Float32Array(16);
     tdl.fast.matrix4.rotationZ(rotationmatrix, framecount/100);
 
     gl.colorMask(true, true, true, true);
@@ -70,8 +69,7 @@ function draw()
     for(var i = 0; i < 3; ++i)
     {
         tdl.fast.matrix4.translation(modelmatrix, [i/2, 0, 0]);
-        tdl.fast.matrix4.mul(temppi, modelmatrix, rotationmatrix);
-        tdl.fast.matrix4.mul(perObjectUniforms.MV, temppi, view);
+        tdl.fast.matrix4.mul(perObjectUniforms.MV, modelmatrix, rotationmatrix);
         model.draw(perObjectUniforms);
     }
 }
