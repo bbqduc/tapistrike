@@ -6,7 +6,7 @@ tdl.require('tdl.primitives');
 tdl.require('tdl.programs');
 tdl.require('tdl.webgl');
 
-document.onload=initialize;
+window.onload=initialize;
 
 function initialize()
 {
