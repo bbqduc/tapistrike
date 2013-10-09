@@ -16,7 +16,7 @@ function initialize()
         return;
 
     var program = tdl.programs.loadProgramFromScriptTags("shader/mvp", "shader/plain-white");
-    var arrays = tdl.primitives.createSphere(1, 10, 100);
+    var arrays = tdl.primitives.createSphere(0.2, 10, 100);
     model = new tdl.models.Model(program, arrays);
 
     sharedUniforms = {
@@ -29,7 +29,8 @@ function initialize()
     view = new Float32Array(16);
     modelmatrix = new Float32Array(16);
 
-    tdl.fast.matrix4.perspective(sharedUniforms.P, tdl.math.degToRad(60), canvas.clientWidth / canvas.clientHeight, 1, 5000);
+    //tdl.fast.matrix4.perspective(sharedUniforms.P, tdl.math.degToRad(60), canvas.clientWidth / canvas.clientHeight, 1, 5000);
+	tdl.fast.matrix4.ortho(sharedUniforms.P, -1, 1, -1, 1, 1, 5000);
 
     var eyeposition = new Float32Array(3);
     var target = new Float32Array(3);
@@ -68,7 +69,7 @@ function draw()
 
     for(var i = 0; i < 3; ++i)
     {
-        tdl.fast.matrix4.translation(modelmatrix, [i*2, 0, 0]);
+        tdl.fast.matrix4.translation(modelmatrix, [i/2, 0, 0]);
         tdl.fast.matrix4.mul(temppi, modelmatrix, rotationmatrix);
         tdl.fast.matrix4.mul(perObjectUniforms.MV, temppi, view);
         model.draw(perObjectUniforms);
