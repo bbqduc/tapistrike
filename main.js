@@ -30,7 +30,8 @@ function initialize()
     modelmatrix = new Float32Array(16);
 
     //tdl.fast.matrix4.perspective(sharedUniforms.P, tdl.math.degToRad(60), canvas.clientWidth / canvas.clientHeight, 1, 5000);
-	tdl.fast.matrix4.ortho(sharedUniforms.P, -1, 1, -1, 1, 1, 5000);
+    var aspectratio = canvas.clientWidth / canvas.clientHeight;
+	tdl.fast.matrix4.ortho(sharedUniforms.P, -1, 1, -1.0/aspectratio, 1.0/aspectratio, 1, 5000);
 
     var eyeposition = new Float32Array(3);
     var target = new Float32Array(3);
