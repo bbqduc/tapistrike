@@ -1,0 +1,3 @@
+[submodule "tdl"]
+	path = tdl
+	url = https://github.com/greggman/tdl.git
