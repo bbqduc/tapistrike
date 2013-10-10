@@ -33,24 +33,6 @@ function initialize()
     var aspectratio = canvas.clientWidth / canvas.clientHeight;
     tdl.fast.matrix4.ortho(sharedUniforms.P, -1, 1, -1.0/aspectratio, 1.0/aspectratio, 1, 5000);
 
-    var eyeposition = new Float32Array(3);
-    var target = new Float32Array(3);
-    var up = new Float32Array(3);
-
-    eyeposition[0] = 0;
-    eyeposition[1] = 0;
-    eyeposition[2] = 6;
-
-    target[0] = 0;
-    target[1] = 0;
-    target[2] = 0;
-
-    up[0] = 0;
-    up[1] = 1;
-    up[2] = 0;
-
-    tdl.fast.matrix4.lookAt(view, eyeposition, target, up);
-    
     framecount=0;
     draw();
 }
