@@ -29,17 +29,18 @@ html, body {
 </script>
 
 <script id="shader/mvp" type="x-shader/x-vertex">
-    attribute vec3 position;
+    attribute vec2 position;
 
     uniform mat4 MV;
     uniform mat4 P;
 
     void main(void)
     {
-        gl_Position = P * MV * vec4(position, 1.0);
+        gl_Position = P * MV * vec4(position, 0.0, 1.0);
     }
 </script>
 <script type="text/javascript" src="tdl/tdl/base.js"></script>
+<script type="text/javascript" src="box2d.js"></script>
 <script type="text/javascript" src="main.js"></script>
 <body>
 <div id="viewContainer">

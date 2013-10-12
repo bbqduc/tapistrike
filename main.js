@@ -8,6 +8,51 @@ tdl.require('tdl.primitives');
 tdl.require('tdl.programs');
 tdl.require('tdl.webgl');
 
+function createCircle(radius, numvertices) // todo : move to some utils.js
+{
+    var accum = 0.0;
+    var incr = Math.PI * 2 / numvertices;
+    var positions = new tdl.primitives.AttribBuffer(2, numvertices+1);
+    var indices = new tdl.primitives.AttribBuffer(3, numvertices+1, 'Uint16Array');
+    positions.push([0,0]);
+    for (var i = 1; i <= numvertices; ++i)
+    {
+        var x = Math.cos(accum);
+        var y = Math.sin(accum);
+        positions.push([radius * x, radius * y]);
+        accum += incr;
+        if(i > 1)
+        {
+            indices.push([0, i-1, i]);
+        }
+    }
+    indices.push([0, i-1, 1]);
+    return {
+    position: positions,
+    indices: indices};
+}
+
+// todo : make physics body part of some entity object
+
+var world = new Box2D.b2World( new Box2D.b2Vec2(0.0, -10.0), true);
+
+var bodydef = new Box2D.b2BodyDef();
+bodydef.set_type(Box2D.b2_dynamicBody);
+bodydef.set_position(new Box2D.b2Vec2(0.0, 10.0));
+var body = world.CreateBody(bodydef);
+var shape = new Box2D.b2CircleShape();
+shape.set_m_p(0, 0);
+shape.set_m_radius(1);
+body.CreateFixture(shape, 0.0);
+
+
+var bd_ground = new Box2D.b2BodyDef();
+var ground = world.CreateBody(bd_ground);
+
+var shape0 = new Box2D.b2EdgeShape();
+shape0.Set(new Box2D.b2Vec2(-40.0, -6.0), new Box2D.b2Vec2(40,0, -6.0));
+ground.CreateFixture(shape0, 0.0);
+
 window.onload=function()
 {
 	window.canvas = document.getElementById("canvas");
@@ -71,7 +116,7 @@ window.onload=function()
 	{
 		Sphere.prototype.constructor=Sphere;
 		DrawableObject.apply(this, ["shader/mvp", "shader/plain-white"]);
-		this.shape=tdl.primitives.createSphere(0.1, 10, 100);
+        this.shape = createCircle(1, 20);
 		this.model=ModelManager.GetModel(this);
 		return this;
 	}
@@ -84,7 +129,7 @@ window.onload=function()
 		};
 		this.objects={};
 		this.aspectRatio = canvas.clientWidth / canvas.clientHeight;
-		tdl.fast.matrix4.ortho(this.sharedUniforms.P, -1, 1, -1.0/this.aspectRatio, 1.0/this.aspectRatio, 1, 5000);
+		tdl.fast.matrix4.ortho(this.sharedUniforms.P, -10, 10, -10.0/this.aspectRatio, 10.0/this.aspectRatio, 1, 5000);
 		return this;
 	}
 	Screen.prototype={
@@ -124,9 +169,10 @@ window.onload=function()
 		{
 			++framecount;
 			tdl.webgl.requestAnimationFrame(draw, canvas);
-			s.Rotate(0,0,framecount/50);
+            s.Translate(body.GetPosition().get_x(), body.GetPosition().get_y(), 0);
 			s2.Rotate(0,0,framecount/100);
 			scrn.Draw();
+            world.Step(0.01, 1, 1); // todo : correct timestep
 		})();
 	})();
 };

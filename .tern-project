@@ -3,6 +3,7 @@
     "browser"
   ],
   "loadEagerly": [
-    "tdl/tdl/*.js"
+    "tdl/tdl/*.js",
+    "box2d.js"
   ]
 }
