@@ -55,9 +55,12 @@ ground.CreateFixture(shape0, 0.0);
 
 window.onload=function()
 {
-	window.canvas = document.getElementById("canvas");
-	window.gl = tdl.webgl.setupWebGL(canvas);
-	window.framecount=0;
+	var canvas=document.createElement("canvas");
+	canvas.width=document.body.offsetWidth;
+	canvas.height=document.body.offsetHeight;
+	document.body.appendChild(canvas);
+	var gl = tdl.webgl.setupWebGL(canvas);
+	var framecount=0;
 
 	function ProgramManager() {}
 	ProgramManager.programs={};
@@ -124,14 +127,15 @@ window.onload=function()
 
 	function Screen()
 	{
-		this.sharedUniforms = {
-			P: new Float32Array(16)
-		};
 		this.objects={};
 		this.aspectRatio = canvas.clientWidth / canvas.clientHeight;
-		tdl.fast.matrix4.ortho(this.sharedUniforms.P, -10, 10, -10.0/this.aspectRatio, 10.0/this.aspectRatio, 1, 5000);
+		tdl.fast.matrix4.ortho(Screen.sharedUniforms.P, -10, 10, -10.0/Screen.aspectRatio, 10.0/Screen.aspectRatio, 1, 5000);
 		return this;
 	}
+	Screen.sharedUniforms={
+		P: new Float32Array(16)
+	}
+	Screen.aspectRatio=canvas.width/canvas.height;
 	Screen.prototype={
 		Draw: function()
 		{
@@ -139,7 +143,7 @@ window.onload=function()
 			gl.clear(gl.COLOR_BUFFER_BIT);
 			for(var cls in this.objects)
 			{
-				ModelManager.models[cls].drawPrep(this.sharedUniforms);
+				ModelManager.models[cls].drawPrep(Screen.sharedUniforms);
 				for(var i=0, len=this.objects[cls].length; i<len; ++i)
 				{
 					this.objects[cls][i].Draw();
@@ -175,4 +179,14 @@ window.onload=function()
             world.Step(0.01, 1, 1); // todo : correct timestep
 		})();
 	})();
+
+	function resizeCanvas(e)
+	{
+		canvas.width=window.innerWidth;
+		canvas.height=window.innerHeight;
+		Screen.aspectRatio=canvas.width/canvas.height;
+		tdl.fast.matrix4.ortho(Screen.sharedUniforms.P, -1, 1, -1.0/Screen.aspectRatio, 1.0/Screen.aspectRatio, 1, 5000);
+		gl.viewport(0, 0, canvas.width, canvas.height);
+	}
+	window.onresize=resizeCanvas;
 };
