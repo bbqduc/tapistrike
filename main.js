@@ -271,7 +271,7 @@ window.onload=function()
 		canvas.width=window.innerWidth;
 		canvas.height=window.innerHeight;
 		Screen.aspectRatio=canvas.width/canvas.height;
-		tdl.fast.matrix4.ortho(Screen.sharedUniforms.P, -1, 1, -1.0/Screen.aspectRatio, 1.0/Screen.aspectRatio, 1, 5000);
+		tdl.fast.matrix4.ortho(Screen.sharedUniforms.P, -10, 10, -10.0/Screen.aspectRatio, 10.0/Screen.aspectRatio, 1, 5000);
 		gl.viewport(0, 0, canvas.width, canvas.height);
 	}
 	window.onresize=resizeCanvas;
