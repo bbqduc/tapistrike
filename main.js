@@ -32,6 +32,25 @@ function createCircle(radius, numvertices) // todo : move to some utils.js
     indices: indices};
 }
 
+function PhysicsBody(body, bodydef, shape)
+{
+    this.body = body;
+    this.bodydef = bodydef;
+    this.shape = shape;
+}
+
+PhysicsBody.prototype={
+    setPosition: function(x,y)
+    {
+//        this.bodydef.set_position(new Box2D.b2Vec2(x,y));
+        this.body.SetTransform(new Box2D.b2Vec2(x,y), this.body.GetAngle());
+    },
+    createFixture: function(shape)
+    {
+        this.body.CreateFixture(shape, 0.0);
+    }
+}
+
 function PhysicsWorld(gravity, sleep)
 {
     this.world = new Box2D.b2World(gravity, sleep);
@@ -45,28 +64,20 @@ PhysicsWorld.prototype={
         var bodydef = new Box2D.b2BodyDef();
         bodydef.set_type(Box2D.b2_dynamicBody);
         var body = this.world.CreateBody(bodydef);
-        return {body: body,
-            bodydef: bodydef};
+        return new PhysicsBody(body, bodydef);
     },
     createStaticBody: function()
     {
         var bodydef = new Box2D.b2BodyDef();
         var body = this.world.CreateBody(bodydef);
-        return {body: body,
-            bodydef: bodydef};
+        return new PhysicsBody(body, bodydef);
     },
-    createCircularDynamicBody: function(radius)
+    createCircleShape: function(radius)
     {
-        var bodydef = new Box2D.b2BodyDef();
-        bodydef.set_type(Box2D.b2_dynamicBody);
-        var body = this.world.CreateBody(bodydef);
         var shape = new Box2D.b2CircleShape();
-        shape.set_m_p(0, 0);
+        shape.set_m_p(new Box2D.b2Vec2(0.0, 0.0));
         shape.set_m_radius(radius);
-        body.CreateFixture(shape, 0.0); // todo : what is the second parameter?
-        return {body: body,
-            bodydef: bodydef,
-            shape: shape};
+        return shape;
     }
 }
 
@@ -220,21 +231,23 @@ window.onload=function()
 
         // create ground entity (invisible for now)
         var groundphysobject = physworld.createStaticBody();
-        groundphysobject.shape = new Box2D.b2EdgeShape();
-        groundphysobject.shape.Set(new Box2D.b2Vec2(-40.0, -6.0), new Box2D.b2Vec2(40.0, -6.0));
-        groundphysobject.body.CreateFixture(groundphysobject.shape, 0.0);
+        var edgeshape = new Box2D.b2EdgeShape();
+        edgeshape.Set(new Box2D.b2Vec2(-40.0, -6.0), new Box2D.b2Vec2(40.0, -6.0));
+        groundphysobject.createFixture(edgeshape);
         EntityManager.AddEntity(null, groundphysobject);
 
         // create sphere entity
-        var spherephysobject = physworld.createDynamicBody();
-        spherephysobject.shape = new Box2D.b2CircleShape();
-        spherephysobject.shape.set_m_p(new Box2D.b2Vec2(0.0, 0.0));
-        spherephysobject.shape.set_m_radius(1);
-        spherephysobject.bodydef.set_position(new Box2D.b2Vec2(0.0, 10.0));
-        spherephysobject.body.CreateFixture(spherephysobject.shape, 0.0);
+        var circleshape = physworld.createCircleShape(1.0);
 
-        var spheredrawableobject = new Sphere();
-        EntityManager.AddEntity(spheredrawableobject, spherephysobject);
+        for(var i=0;i<10;++i)
+        {
+            var circlephysobject = physworld.createDynamicBody();
+            circlephysobject.setPosition(0.3*i-0.5, i*2);
+            circlephysobject.createFixture(circleshape);
+
+            var spheredrawableobject = new Sphere();
+            EntityManager.AddEntity(spheredrawableobject, circlephysobject);
+        }
 
 		var scrn=new Screen();
         for(var i=0;i<EntityManager.entities.length;++i)
