@@ -239,7 +239,7 @@ window.onload=function()
         // create sphere entity
         var circleshape = physworld.createCircleShape(1.0);
 
-        for(var i=0;i<10;++i)
+        for(var i=0;i<100;++i)
         {
             var circlephysobject = physworld.createDynamicBody();
             circlephysobject.setPosition(0.3*i-0.5, i*2);
@@ -257,12 +257,19 @@ window.onload=function()
                 scrn.AddObject(ent.drawableObject);
         }
 
+        var prevt = window.performance.now();
+        
 		(function draw()
 		{
+            var curt = window.performance.now();
+            var iterations = (curt - prevt)*60/1000;
+            for(var i = 0; i < iterations; ++i)
+                world.Step(1.0/60.0, 3, 3);
+            prevt = prevt + iterations*1000/60;
+
 			++framecount;
 			tdl.webgl.requestAnimationFrame(draw, canvas);
 			scrn.Draw();
-            world.Step(0.01, 1, 1); // todo : correct timestep
 		})();
 	})();
 
