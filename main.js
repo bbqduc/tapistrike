@@ -40,6 +40,21 @@ function PhysicsWorld(gravity, sleep)
 
 PhysicsWorld.prototype={
     constructor: PhysicsWorld,
+    createDynamicBody: function()
+    {
+        var bodydef = new Box2D.b2BodyDef();
+        bodydef.set_type(Box2D.b2_dynamicBody);
+        var body = this.world.CreateBody(bodydef);
+        return {body: body,
+            bodydef: bodydef};
+    },
+    createStaticBody: function()
+    {
+        var bodydef = new Box2D.b2BodyDef();
+        var body = this.world.CreateBody(bodydef);
+        return {body: body,
+            bodydef: bodydef};
+    },
     createCircularDynamicBody: function(radius)
     {
         var bodydef = new Box2D.b2BodyDef();
@@ -55,24 +70,20 @@ PhysicsWorld.prototype={
     }
 }
 
-//var bd_ground = new Box2D.b2BodyDef();
-//var ground = world.CreateBody(bd_ground);
 
-//var shape0 = new Box2D.b2EdgeShape();
-//shape0.Set(new Box2D.b2Vec2(-40.0, -6.0), new Box2D.b2Vec2(40,0, -6.0));
-//ground.CreateFixture(shape0, 0.0);
-
-function Entity(world)
+function Entity(drawableobject, physicsobject)
 {
-    this.drawableObject = new DrawableObject();
-    this.physicsObject = world.createCircularDynamicBody(1.0);
+    this.drawableObject = drawableobject;
+    this.physicsObject = physicsobject;
 }
+
 Entity.prototype={
     constructor: Entity,
     SyncDrawWithPhysics: function()
     {
-        obj.Translate(physicsObject.body.GetPosition().get_x(), physicsObject.body.GetPosition().get_y(), 0); // relies on Translate & Rotate overwriting previous data
-        obj.Rotate(0,0,physicsObject.body.GetAngle());
+        if(!this.physicsObject || !this.drawableObject) return;
+        this.drawableObject.Translate(this.physicsObject.body.GetPosition().get_x(), this.physicsObject.body.GetPosition().get_y(), 0); // relies on Translate & Rotate overwriting previous data
+        this.drawableObject.Rotate(0,0,this.physicsObject.body.GetAngle());
     }
 }
 
@@ -85,6 +96,13 @@ window.onload=function()
 	document.body.appendChild(canvas);
 	var gl = tdl.webgl.setupWebGL(canvas);
 	var framecount=0;
+
+    function EntityManager() {}
+    EntityManager.entities=[];
+    EntityManager.AddEntity = function(drawableObject, physicsobject)
+    {
+        EntityManager.entities.push(new Entity(drawableObject, physicsobject));
+    }
 
 	function ProgramManager() {}
 	ProgramManager.programs={};
@@ -113,7 +131,6 @@ window.onload=function()
 			MV: new Float32Array(16)
 		};
 		this.shape=null;
-        this.tempMatrix = new Float32Array(16);
 		this.modelMatrix = new Float32Array(16);
 		this.rotationMatrix = new Float32Array(16);
 		this.program = ProgramManager.LoadProgram(vshader, fshader);
@@ -138,6 +155,7 @@ window.onload=function()
 		},
 		Rotate: function(x,y,z)
 		{
+            // todo : fix so rotations don't get overwritten
 //			tdl.fast.matrix4.rotationX(this.rotationMatrix, x);
 //			tdl.fast.matrix4.rotationY(this.rotationMatrix, y);
 			tdl.fast.matrix4.rotationZ(this.rotationMatrix, z);
@@ -168,6 +186,11 @@ window.onload=function()
 	Screen.prototype={
 		Draw: function()
 		{
+            for(var i=0;i<EntityManager.entities.length;++i)
+            {
+                var ent=EntityManager.entities[i];
+                ent.SyncDrawWithPhysics();
+            }
 			gl.colorMask(true, true, true, true);
 			gl.clear(gl.COLOR_BUFFER_BIT);
 			for(var cls in this.objects)
@@ -190,21 +213,41 @@ window.onload=function()
 	(function initialize()
 	{
 		if(!gl) return;
+
+        // initialize world
+        var physworld = new PhysicsWorld(new Box2D.b2Vec2(0.0, -10.0));
+        var world = physworld.world;
+
+        // create ground entity (invisible for now)
+        var groundphysobject = physworld.createStaticBody();
+        groundphysobject.shape = new Box2D.b2EdgeShape();
+        groundphysobject.shape.Set(new Box2D.b2Vec2(-40.0, -6.0), new Box2D.b2Vec2(40.0, -6.0));
+        groundphysobject.body.CreateFixture(groundphysobject.shape, 0.0);
+        EntityManager.AddEntity(null, groundphysobject);
+
+        // create sphere entity
+        var spherephysobject = physworld.createDynamicBody();
+        spherephysobject.shape = new Box2D.b2CircleShape();
+        spherephysobject.shape.set_m_p(new Box2D.b2Vec2(0.0, 0.0));
+        spherephysobject.shape.set_m_radius(1);
+        spherephysobject.bodydef.set_position(new Box2D.b2Vec2(0.0, 10.0));
+        spherephysobject.body.CreateFixture(spherephysobject.shape, 0.0);
+
+        var spheredrawableobject = new Sphere();
+        EntityManager.AddEntity(spheredrawableobject, spherephysobject);
+
 		var scrn=new Screen();
-		var s=new Sphere;
-		s.Translate(0.2, 0, 0);
-		var s2=new Sphere;
-		s2.Translate(0.4, 0, 0);
-        var s = new Entity(
-		scrn.AddObject(s);
-		scrn.AddObject(s2);
-		scrn.AddObject(new Sphere);
+        for(var i=0;i<EntityManager.entities.length;++i)
+        {
+            var ent=EntityManager.entities[i];
+            if(ent.drawableObject)
+                scrn.AddObject(ent.drawableObject);
+        }
+
 		(function draw()
 		{
 			++framecount;
 			tdl.webgl.requestAnimationFrame(draw, canvas);
-            s.Translate(body.GetPosition().get_x(), body.GetPosition().get_y(), 0);
-			s2.Rotate(0,0,framecount/100);
 			scrn.Draw();
             world.Step(0.01, 1, 1); // todo : correct timestep
 		})();
