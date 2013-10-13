@@ -21,14 +21,14 @@ html, body {
     height: 100%;
 }
 </style>
-<script id="shader/plain-white" type="x-shader/x-fragment">
+<script id="fshader/plain-white" type="x-shader/x-fragment">
     void main(void)
     {
         gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
     }
 </script>
 
-<script id="shader/mvp" type="x-shader/x-vertex">
+<script id="vshader/mvp" type="x-shader/x-vertex">
     attribute vec2 position;
 
     uniform mat4 MV;

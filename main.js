@@ -32,29 +32,53 @@ function createCircle(radius, numvertices) // todo : move to some utils.js
     indices: indices};
 }
 
-// todo : make physics body part of some entity object
+function PhysicsWorld(gravity, sleep)
+{
+    this.world = new Box2D.b2World(gravity, sleep);
+    this.gravity = gravity;
+}
 
-var world = new Box2D.b2World( new Box2D.b2Vec2(0.0, -10.0), true);
+PhysicsWorld.prototype={
+    constructor: PhysicsWorld,
+    createCircularDynamicBody: function(radius)
+    {
+        var bodydef = new Box2D.b2BodyDef();
+        bodydef.set_type(Box2D.b2_dynamicBody);
+        var body = this.world.CreateBody(bodydef);
+        var shape = new Box2D.b2CircleShape();
+        shape.set_m_p(0, 0);
+        shape.set_m_radius(radius);
+        body.CreateFixture(shape, 0.0); // todo : what is the second parameter?
+        return {body: body,
+            bodydef: bodydef,
+            shape: shape};
+    }
+}
 
-var bodydef = new Box2D.b2BodyDef();
-bodydef.set_type(Box2D.b2_dynamicBody);
-bodydef.set_position(new Box2D.b2Vec2(0.0, 10.0));
-var body = world.CreateBody(bodydef);
-var shape = new Box2D.b2CircleShape();
-shape.set_m_p(0, 0);
-shape.set_m_radius(1);
-body.CreateFixture(shape, 0.0);
+//var bd_ground = new Box2D.b2BodyDef();
+//var ground = world.CreateBody(bd_ground);
 
+//var shape0 = new Box2D.b2EdgeShape();
+//shape0.Set(new Box2D.b2Vec2(-40.0, -6.0), new Box2D.b2Vec2(40,0, -6.0));
+//ground.CreateFixture(shape0, 0.0);
 
-var bd_ground = new Box2D.b2BodyDef();
-var ground = world.CreateBody(bd_ground);
-
-var shape0 = new Box2D.b2EdgeShape();
-shape0.Set(new Box2D.b2Vec2(-40.0, -6.0), new Box2D.b2Vec2(40,0, -6.0));
-ground.CreateFixture(shape0, 0.0);
+function Entity(world)
+{
+    this.drawableObject = new DrawableObject();
+    this.physicsObject = world.createCircularDynamicBody(1.0);
+}
+Entity.prototype={
+    constructor: Entity,
+    SyncDrawWithPhysics: function()
+    {
+        obj.Translate(physicsObject.body.GetPosition().get_x(), physicsObject.body.GetPosition().get_y(), 0); // relies on Translate & Rotate overwriting previous data
+        obj.Rotate(0,0,physicsObject.body.GetAngle());
+    }
+}
 
 window.onload=function()
 {
+    var world=new PhysicsWorld(new Box2D.b2Vec2(0.0, -10.0), true);
 	var canvas=document.createElement("canvas");
 	canvas.width=document.body.offsetWidth;
 	canvas.height=document.body.offsetHeight;
@@ -84,14 +108,15 @@ window.onload=function()
 		return models[classname];
 	};
 
-	function DrawableObject(mvp, shader) {
+	function DrawableObject(vshader, fshader) {
 		this.uniforms={
 			MV: new Float32Array(16)
 		};
 		this.shape=null;
+        this.tempMatrix = new Float32Array(16);
 		this.modelMatrix = new Float32Array(16);
 		this.rotationMatrix = new Float32Array(16);
-		this.program = ProgramManager.LoadProgram(mvp, shader);
+		this.program = ProgramManager.LoadProgram(vshader, fshader);
 		this.Translate(0,0,0);
 		this.Rotate(0,0,0);
 		return this;
@@ -103,14 +128,18 @@ window.onload=function()
 			tdl.fast.matrix4.mul(this.uniforms.MV, this.modelMatrix, this.rotationMatrix);
 			this.model.draw(this.uniforms);
 		},
+        ResetMatrix: function()
+        {
+            tdl.fast.matrix4.identity(this.modelMatrix);
+        },
 		Translate: function(x,y,z)
 		{
 			tdl.fast.matrix4.translation(this.modelMatrix, [x,y,z]);
 		},
 		Rotate: function(x,y,z)
 		{
-			tdl.fast.matrix4.rotationX(this.rotationMatrix, x);
-			tdl.fast.matrix4.rotationY(this.rotationMatrix, y);
+//			tdl.fast.matrix4.rotationX(this.rotationMatrix, x);
+//			tdl.fast.matrix4.rotationY(this.rotationMatrix, y);
 			tdl.fast.matrix4.rotationZ(this.rotationMatrix, z);
 		}
 	};
@@ -118,7 +147,7 @@ window.onload=function()
 	function Sphere()
 	{
 		Sphere.prototype.constructor=Sphere;
-		DrawableObject.apply(this, ["shader/mvp", "shader/plain-white"]);
+		DrawableObject.apply(this, ["vshader/mvp", "fshader/plain-white"]);
         this.shape = createCircle(1, 20);
 		this.model=ModelManager.GetModel(this);
 		return this;
@@ -166,6 +195,7 @@ window.onload=function()
 		s.Translate(0.2, 0, 0);
 		var s2=new Sphere;
 		s2.Translate(0.4, 0, 0);
+        var s = new Entity(
 		scrn.AddObject(s);
 		scrn.AddObject(s2);
 		scrn.AddObject(new Sphere);
