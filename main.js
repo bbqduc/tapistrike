@@ -232,7 +232,7 @@ window.onload=function()
         // create ground entity (invisible for now)
         var groundphysobject = physworld.createStaticBody();
         var edgeshape = new Box2D.b2EdgeShape();
-        edgeshape.Set(new Box2D.b2Vec2(-40.0, -6.0), new Box2D.b2Vec2(40.0, -6.0));
+        edgeshape.Set(new Box2D.b2Vec2(-40.0, 0.0), new Box2D.b2Vec2(40.0, -6.0));
         groundphysobject.createFixture(edgeshape);
         EntityManager.AddEntity(null, groundphysobject);
 
@@ -242,7 +242,7 @@ window.onload=function()
         for(var i=0;i<100;++i)
         {
             var circlephysobject = physworld.createDynamicBody();
-            circlephysobject.setPosition(0.3*i-0.5, i*2);
+            circlephysobject.setPosition(0, i*2);
             circlephysobject.createFixture(circleshape);
 
             var spheredrawableobject = new Sphere();
