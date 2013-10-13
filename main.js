@@ -262,7 +262,8 @@ window.onload=function()
 		(function draw()
 		{
             var curt = window.performance.now();
-            var iterations = (curt - prevt)*60/1000;
+            var iterations = Math.floor((curt - prevt)*60/1000);
+            console.log("Simulating " + iterations + " iterations.");
             for(var i = 0; i < iterations; ++i)
                 world.Step(1.0/60.0, 3, 3);
             prevt = prevt + iterations*1000/60;
