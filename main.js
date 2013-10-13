@@ -8,6 +8,26 @@ tdl.require('tdl.primitives');
 tdl.require('tdl.programs');
 tdl.require('tdl.webgl');
 
+var zoomoutlevel = 100.0;
+
+function createSquare() // todo : move to some utils.js
+{
+    var positions = new tdl.primitives.AttribBuffer(2, 4);
+    var indices = new tdl.primitives.AttribBuffer(3, 2, 'Uint16Array');
+
+    positions.push([0.5,-0.5]);
+    positions.push([-0.5,0.5]);
+    positions.push([0.5,0.5]);
+    positions.push([-0.5,-0.5]);
+
+    indices.push([3,0,1]);
+    indices.push([2,1,0]);
+
+    return {
+    position: positions,
+    indices: indices};
+}
+
 function createCircle(radius, numvertices) // todo : move to some utils.js
 {
     var accum = 0.0;
@@ -173,6 +193,15 @@ window.onload=function()
 		}
 	};
 
+    function Rectangle(width, height)
+    {
+        Rectangle.prototype.constructor=Rectangle;
+		DrawableObject.apply(this, ["vshader/mvp", "fshader/plain-white"]);
+        this.shape = createSquare;
+        this.width = width;
+        this.height = height;
+    }
+
 	function Sphere()
 	{
 		Sphere.prototype.constructor=Sphere;
@@ -187,7 +216,7 @@ window.onload=function()
 	{
 		this.objects={};
 		this.aspectRatio = canvas.clientWidth / canvas.clientHeight;
-		tdl.fast.matrix4.ortho(Screen.sharedUniforms.P, -10, 10, -10.0/Screen.aspectRatio, 10.0/Screen.aspectRatio, 1, 5000);
+		tdl.fast.matrix4.ortho(Screen.sharedUniforms.P, -1*zoomoutlevel, zoomoutlevel, -1*zoomoutlevel/Screen.aspectRatio, zoomoutlevel/Screen.aspectRatio, 1, 5000);
 		return this;
 	}
 	Screen.sharedUniforms={
@@ -279,7 +308,7 @@ window.onload=function()
 		canvas.width=window.innerWidth;
 		canvas.height=window.innerHeight;
 		Screen.aspectRatio=canvas.width/canvas.height;
-		tdl.fast.matrix4.ortho(Screen.sharedUniforms.P, -10, 10, -10.0/Screen.aspectRatio, 10.0/Screen.aspectRatio, 1, 5000);
+		tdl.fast.matrix4.ortho(Screen.sharedUniforms.P, -1*zoomoutlevel, zoomoutlevel, -1*zoomoutlevel/Screen.aspectRatio, zoomoutlevel/Screen.aspectRatio, 1, 5000);
 		gl.viewport(0, 0, canvas.width, canvas.height);
 	}
 	window.onresize=resizeCanvas;
