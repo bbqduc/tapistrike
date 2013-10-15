@@ -11,7 +11,7 @@ tdl.require('tdl.webgl');
 window.onload=function()
 {
 	var zoomoutlevel = 100.0;
-    var world=new PhysicsWorld(new Box2D.b2Vec2(0.0, -10.0), true);
+	var world=new PhysicsWorld(new Box2D.b2Vec2(0.0, -10.0), true);
 	var canvas=createCanvas();
 	var gl = tdl.webgl.setupWebGL(canvas);
 	var framecount=0;
@@ -59,7 +59,6 @@ window.onload=function()
 		for(var i = 0; i < iterations; ++i)
 			world.Step(1.0/60.0, 3, 3);
 		prevt = prevt + iterations*1000/60;
-
 		++framecount;
 		tdl.webgl.requestAnimationFrame(draw, canvas);
 		scrn.Draw();
