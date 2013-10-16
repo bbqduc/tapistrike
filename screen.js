@@ -32,9 +32,11 @@ Screen.prototype={
 	},
 	AddObject: function(o)
 	{
-		if(!this.objects[o.constructor.name])
-			this.objects[o.constructor.name]=[o];
-		else this.objects[o.constructor.name].push(o);
+		var ostr=o.constructor.name;
+		if(o.texture) ostr+=o.texture.id;
+		if(!this.objects[ostr])
+			this.objects[ostr]=[o];
+		else this.objects[ostr].push(o);
 	},
 	ResizeCanvas: function()
 	{

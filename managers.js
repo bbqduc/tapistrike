@@ -27,10 +27,11 @@ ModelManager.GetModel=function(drawableobject)
 {
 	var models=ModelManager.models;
 	var classname=drawableobject.constructor.name;
+	if(drawableobject.texture) classname+=drawableobject.texture.id;
 	if(!models[classname])
 	{
 		// Name 'texsampler' must correspond to sampler2D name in the fragment shader
-		models[classname]=new tdl.models.Model(drawableobject.program, drawableobject.shape, {texsampler: drawableobject.texture});
+		models[classname]=new tdl.models.Model(drawableobject.program, drawableobject.shape, {texsampler: drawableobject.texture.texture});
 	}
 	return models[classname];
 };
@@ -43,11 +44,12 @@ TextureManager.textures={
 };
 TextureManager.Initialize=function(cb)
 {
+	var texid=1;
 	var ready=0;
 	var texturecount=Object.keys(TextureManager.textures).length;
 	for(var texname in TextureManager.textures)
 	{// Replace texture path with actual texture id
-		TextureManager.textures[texname]=tdl.textures.loadTexture(TextureManager.textures[texname], true, function()
+		TextureManager.textures[texname]={texture: tdl.textures.loadTexture(TextureManager.textures[texname], true, function()
 		{// Call callback when all textures are loaded
 			if(++ready==texturecount)
 			{
@@ -55,7 +57,7 @@ TextureManager.Initialize=function(cb)
 				TextureManager.initialized=true;
 				cb();
 			}
-		});
+		}), id: texid++};
 	}
 }
 TextureManager.GetTexture=function(texname)
