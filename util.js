@@ -55,3 +55,11 @@ function createCanvas()
 	document.body.appendChild(canvas);
 	return canvas;
 }
+
+function handleMouseWheel(e,screen)
+{
+	if(e.wheelDeltaY>0) screen.zoomoutlevel-=5;
+	else if(e.wheelDeltaY<0) screen.zoomoutlevel+=5;
+	screen.zoomoutlevel=Math.max(1,screen.zoomoutlevel);
+	screen.UpdateProjection();
+}

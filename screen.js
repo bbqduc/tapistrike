@@ -41,7 +41,11 @@ Screen.prototype={
 		this.canvas.width=window.innerWidth;
 		this.canvas.height=window.innerHeight;
 		Screen.aspectRatio=this.canvas.width/this.canvas.height;
-		tdl.fast.matrix4.ortho(Screen.sharedUniforms.P, -1*this.zoomoutlevel, this.zoomoutlevel, -1*this.zoomoutlevel/Screen.aspectRatio, this.zoomoutlevel/Screen.aspectRatio, 1, 5000);
+		this.UpdateProjection();
 		gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+	},
+	UpdateProjection: function()
+	{
+		tdl.fast.matrix4.ortho(Screen.sharedUniforms.P, -1*this.zoomoutlevel, this.zoomoutlevel, -1*this.zoomoutlevel/Screen.aspectRatio, this.zoomoutlevel/Screen.aspectRatio, 1, 5000);
 	}
 };

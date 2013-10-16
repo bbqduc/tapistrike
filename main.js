@@ -58,7 +58,7 @@ window.onload=function()
 		{
 			var curt = window.performance.now();
 			var iterations = Math.floor((curt - prevt)*60/1000);
-			console.log("Simulating " + iterations + " iterations.");
+			//console.log("Simulating " + iterations + " iterations.");
 			for(var i = 0; i < iterations; ++i)
 				world.Step(1.0/60.0, 3, 3);
 			prevt = prevt + iterations*1000/60;
@@ -67,5 +67,6 @@ window.onload=function()
 			scrn.Draw();
 		})();
 		window.onresize=function(){scrn.ResizeCanvas();};
+		window.onmousewheel=function(e){handleMouseWheel(e,scrn);}
 	});
 };
