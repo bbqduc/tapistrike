@@ -28,6 +28,14 @@ Screen.prototype={
             }
 		}
 	},
+	AddObject: function(o)
+	{
+		var ostr=o.constructor.name;
+		if(o.texture) ostr+=o.texture.id;
+		if(!this.objects[ostr])
+			this.objects[ostr]=[o];
+		else this.objects[ostr].push(o);
+	},
 	ResizeCanvas: function()
 	{
 		this.canvas.width=window.innerWidth;
