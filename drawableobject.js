@@ -10,6 +10,7 @@ function DrawableObject(vshader, fshader) {
 	this.program = ProgramManager.LoadProgram(vshader, fshader);
 	this.Translate(0,0,0);
 	this.Rotate(0,0,0);
+	this.texture=undefined;
 	return this;
 }
 

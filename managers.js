@@ -28,3 +28,28 @@ ModelManager.GetModel=function(drawableobject)
 		models[classname]=new tdl.models.Model(drawableobject.program, drawableobject.shape);
 	return models[classname];
 };
+
+function TextureManager() {}
+TextureManager.initialized=false;
+TextureManager.textures={
+	test: "testTexture.png"
+};
+TextureManager.Initialize=function(cb)
+{
+	var ready=0;
+	var texturecount=Object.keys(TextureManager.textures).length;
+	for(var texname in TextureManager.textures)
+	{// Replace texture path with actual texture id
+		TextureManager.textures[texname]=tdl.textures.loadTexture(TextureManager.textures[texname], false, function()
+		{// Call callback when all textures are loaded
+			console.log("Texture manager initialized");
+			TextureManager.initialized=true;
+			if(++ready==texturecount) cb();
+		});
+	}
+}
+TextureManager.GetTexture=function(texname)
+{
+	if(!TextureManager.initialized) throw "TextureManager not initialized";
+	return TextureManager.textures[texname];
+}
