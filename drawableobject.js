@@ -18,7 +18,7 @@ DrawableObject.prototype={
 	constructor: DrawableObject,
 	Draw: function()
 	{
-		tdl.fast.matrix4.mul(this.uniforms.MV, this.modelMatrix, this.rotationMatrix);
+		tdl.fast.matrix4.mul(this.uniforms.MV, this.rotationMatrix, this.modelMatrix);
 		this.model.draw(this.uniforms);
 	},
 	ResetMatrix: function()

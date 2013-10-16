@@ -43,7 +43,7 @@ TextureManager.Initialize=function(cb)
 	var texturecount=Object.keys(TextureManager.textures).length;
 	for(var texname in TextureManager.textures)
 	{// Replace texture path with actual texture id
-		TextureManager.textures[texname]=tdl.textures.loadTexture(TextureManager.textures[texname], false, function()
+		TextureManager.textures[texname]=tdl.textures.loadTexture(TextureManager.textures[texname], true, function()
 		{// Call callback when all textures are loaded
 			console.log("Texture manager initialized");
 			TextureManager.initialized=true;
