@@ -1,4 +1,4 @@
-"use strict";
+    "use strict";
 
 function PhysicsBody(body, bodydef, shape)
 {
@@ -15,7 +15,11 @@ PhysicsBody.prototype={
 	},
 	createFixture: function(shape)
 	{
-		this.body.CreateFixture(shape, 0.0);
+        var fixturedef = new Box2D.b2FixtureDef();
+        fixturedef.set_shape(shape);
+        fixturedef.set_friction(0.3);
+        fixturedef.set_density(1);
+		this.body.CreateFixture(fixturedef);
 	}
 }
 
