@@ -22,9 +22,15 @@ html, body {
 }
 </style>
 <script id="fshader/plain-white" type="x-shader/x-fragment">
+	#ifdef GL_ES
+		precision highp float;
+	#endif
+	uniform sampler2D texsampler;
+	varying vec2 texCoord_out;
     void main(void)
     {
-        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+		vec4 tex=texture2D(texsampler, texCoord_out);
+        gl_FragColor = vec4(tex.rgb, 1.0);
     }
 </script>
 
@@ -34,8 +40,12 @@ html, body {
     uniform mat4 MV;
     uniform mat4 P;
 
+	attribute vec2 texCoord;
+	varying vec2 texCoord_out;
+
     void main(void)
     {
+		texCoord_out=texCoord;
         gl_Position = P * MV * vec4(position, 0.0, 1.0);
     }
 </script>

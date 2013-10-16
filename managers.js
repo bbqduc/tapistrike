@@ -25,7 +25,7 @@ ModelManager.GetModel=function(drawableobject)
 	var models=ModelManager.models;
 	var classname=drawableobject.constructor.name;
 	if(!models[classname])
-		models[classname]=new tdl.models.Model(drawableobject.program, drawableobject.shape);
+		models[classname]=new tdl.models.Model(drawableobject.program, drawableobject.shape, drawableobject.texture);
 	return models[classname];
 };
 
