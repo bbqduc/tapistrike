@@ -39,7 +39,7 @@ window.onload=function()
 		for(var i=0;i<100;++i)
 		{
 			var physobject = physworld.createDynamicBody();
-			physobject.setPosition(Math.random()*2, i*2);
+			physobject.setPosition(Math.random(), i*2);
 			if(i%2 == 0) physobject.createFixture(circleshape);
 			else physobject.createFixture(rectshape);
 			if(i%2 == 0) EntityManager.AddEntity(new Sphere, physobject);
