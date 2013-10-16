@@ -27,12 +27,13 @@ function createCircle(radius, numvertices)
 	var indices = new tdl.primitives.AttribBuffer(3, numvertices+1, 'Uint16Array');
 	var texcoord=new tdl.primitives.AttribBuffer(2, numvertices+1);
 	positions.push([0,0]);
+	texcoord.push([0.5,0.5]);
 	for (var i = 1; i <= numvertices; ++i)
 	{
 		var x = Math.cos(accum);
 		var y = Math.sin(accum);
 		positions.push([radius * x, radius * y]);
-		texcoord.push([x,y]);
+		texcoord.push([x/2+0.5,y/2+0.5]);
 		accum += incr;
 		if(i > 1)
 		{
