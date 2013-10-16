@@ -46,5 +46,11 @@ PhysicsWorld.prototype={
 		shape.set_m_p(new Box2D.b2Vec2(0.0, 0.0));
 		shape.set_m_radius(radius);
 		return shape;
+	},
+	createSquareShape: function(width, height)
+	{
+		var shape = new Box2D.b2PolygonShape();
+		shape.SetAsBox(width, height);
+		return shape;
 	}
 };

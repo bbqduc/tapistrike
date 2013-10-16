@@ -1,5 +1,8 @@
 "use strict";
 
+tdl.require("tdl.programs");
+tdl.require("tdl.fast");
+
 function EntityManager() {}
 EntityManager.entities=[];
 EntityManager.AddEntity = function(drawableObject, physicsobject)
@@ -35,6 +38,7 @@ ModelManager.GetModel=function(drawableobject)
 function TextureManager() {}
 TextureManager.initialized=false;
 TextureManager.textures={
+	another: "anotherTexture.png",
 	test: "testTexture.png"
 };
 TextureManager.Initialize=function(cb)
@@ -43,11 +47,14 @@ TextureManager.Initialize=function(cb)
 	var texturecount=Object.keys(TextureManager.textures).length;
 	for(var texname in TextureManager.textures)
 	{// Replace texture path with actual texture id
-		TextureManager.textures[texname]=tdl.textures.loadTexture(TextureManager.textures[texname], false, function()
+		TextureManager.textures[texname]=tdl.textures.loadTexture(TextureManager.textures[texname], true, function()
 		{// Call callback when all textures are loaded
-			console.log("Texture manager initialized");
-			TextureManager.initialized=true;
-			if(++ready==texturecount) cb();
+			if(++ready==texturecount)
+			{
+				console.log("Texture manager initialized");
+				TextureManager.initialized=true;
+				cb();
+			}
 		});
 	}
 }

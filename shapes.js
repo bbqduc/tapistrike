@@ -1,22 +1,27 @@
 "use strict";
 
+Rectangle.prototype=new DrawableObject;
+Rectangle.prototype.constructor=Rectangle;
 function Rectangle(width, height)
 {
-	Rectangle.prototype.constructor=Rectangle;
-	DrawableObject.apply(this, ["vshader/mvp", "fshader/plain-white"]);
-	this.shape = createSquare();
+	DrawableObject.call(this,arguments);
+	this.LoadProgram("vshader/mvp", "fshader/plain-white");
+	this.shape = createRectangle(width, height);
+	this.texture=TextureManager.GetTexture("another");
 	this.width = width;
 	this.height = height;
+	this.model=ModelManager.GetModel(this);
+	return this;
 }
-Rectangle.prototype=DrawableObject.prototype;
 
+Sphere.prototype=new DrawableObject;
+Sphere.prototype.constructor=Sphere;
 function Sphere()
 {
-	Sphere.prototype.constructor=Sphere;
-	DrawableObject.apply(this, ["vshader/mvp", "fshader/plain-white"]);
+	DrawableObject.call(this,arguments);
+	this.LoadProgram("vshader/mvp", "fshader/plain-white");
 	this.shape = createCircle(1, 20);
 	this.texture=TextureManager.GetTexture("test");
 	this.model=ModelManager.GetModel(this);
 	return this;
 }
-Sphere.prototype=DrawableObject.prototype;

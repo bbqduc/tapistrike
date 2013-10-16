@@ -32,17 +32,18 @@ window.onload=function()
 		groundphysobject.createFixture(edgeshape);
 		EntityManager.AddEntity(null, groundphysobject);
 
-		// create sphere entity
+		// create entities
 		var circleshape = physworld.createCircleShape(1.0);
+		var rectshape=physworld.createSquareShape(1.0, 1.0);
 
 		for(var i=0;i<100;++i)
 		{
-			var circlephysobject = physworld.createDynamicBody();
-			circlephysobject.setPosition(0, i*2);
-			circlephysobject.createFixture(circleshape);
-
-			var spheredrawableobject = new Sphere();
-			EntityManager.AddEntity(spheredrawableobject, circlephysobject);
+			var physobject = physworld.createDynamicBody();
+			physobject.setPosition(Math.random()*2, i*2);
+			if(i%2 == 0) physobject.createFixture(circleshape);
+			else physobject.createFixture(rectshape);
+			if(i%2 == 0) EntityManager.AddEntity(new Sphere, physobject);
+			else EntityManager.AddEntity(new Rectangle(1.0, 1.0), physobject);
 		}
 
 		var scrn=new Screen(canvas, zoomoutlevel);
