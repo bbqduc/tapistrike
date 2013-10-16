@@ -25,7 +25,10 @@ ModelManager.GetModel=function(drawableobject)
 	var models=ModelManager.models;
 	var classname=drawableobject.constructor.name;
 	if(!models[classname])
-		models[classname]=new tdl.models.Model(drawableobject.program, drawableobject.shape, drawableobject.texture);
+	{
+		// Name 'texsampler' must correspond to sampler2D name in the fragment shader
+		models[classname]=new tdl.models.Model(drawableobject.program, drawableobject.shape, {texsampler: drawableobject.texture});
+	}
 	return models[classname];
 };
 
@@ -51,5 +54,7 @@ TextureManager.Initialize=function(cb)
 TextureManager.GetTexture=function(texname)
 {
 	if(!TextureManager.initialized) throw "TextureManager not initialized";
-	return TextureManager.textures[texname];
+	var tex=TextureManager.textures[texname];
+	if(!tex) throw "Texture " + texname + " not found";
+	return tex;
 }

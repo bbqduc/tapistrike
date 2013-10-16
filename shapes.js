@@ -15,6 +15,7 @@ function Sphere()
 	Sphere.prototype.constructor=Sphere;
 	DrawableObject.apply(this, ["vshader/mvp", "fshader/plain-white"]);
 	this.shape = createCircle(1, 20);
+	this.texture=TextureManager.GetTexture("test");
 	this.model=ModelManager.GetModel(this);
 	return this;
 }
