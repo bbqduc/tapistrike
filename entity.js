@@ -1,6 +1,8 @@
 "use strict";
 
-function Entity(drawableobject, physicsobject)
+tdl.require("tdl.fast");
+
+function Entity(drawableobject, physicsobject) // this would probably be an abstract class in another language
 {
 	this.drawableObject = drawableobject;
 	this.physicsObject = physicsobject;
@@ -8,10 +10,40 @@ function Entity(drawableobject, physicsobject)
 
 Entity.prototype={
 	constructor: Entity,
-	SyncDrawWithPhysics: function()
-	{
-		if(!this.physicsObject || !this.drawableObject) return;
-		this.drawableObject.Translate(this.physicsObject.body.GetPosition().get_x(), this.physicsObject.body.GetPosition().get_y(), 0); // relies on Translate & Rotate overwriting previous data
-		this.drawableObject.Rotate(0,0,this.physicsObject.body.GetAngle());
-	}
+    PrepareUniforms: function(uniforms) // this should probably always be overridden
+    {
+        tdl.fast.matrix4.identity4(uniforms.MV);
+    },
+    Draw: function(uniforms)
+    {
+        this.PrepareUniforms(uniforms);
+        this.model.Draw(uniforms);
+    }
 };
+
+function StaticEntity(x,y,angle,model) // can also have physics with a static entity
+{
+    this.model = model;
+    this.x = x;
+    this.y = y;
+    this.angle = angle;
+}
+StaticEntity.prototype = Object.create(Entity.prototype);
+StaticEntity.prototype.PrepareUniforms = function(uniforms)
+{
+    tdl.fast.matrix4.rotationZ(uniforms.MV, angle);
+    tdl.fast.matrix4.translate(uniforms.MV, x, y, 0);
+}
+
+function DynamicEntity(model, physicsobject)
+{
+    this.physicsObject = physicsobject;
+    this.model = model;
+}
+DynamicEntity.prototype = Object.create(Entity.prototype);
+DynamicEntity.prototype.PrepareUniforms = function(uniforms)
+{
+    tdl.fast.matrix4.translation(uniforms.MV, [this.physicsObject.GetX(), this.physicsObject.GetY(), 0]);
+    tdl.fast.matrix4.rotateZ(uniforms.MV, this.physicsObject.GetAngle());
+}
+

@@ -2,7 +2,6 @@
 
 function Screen(canvas, zoomoutlevel)
 {
-	this.objects={};
 	this.canvas=canvas;
 	this.zoomoutlevel=zoomoutlevel;
 	this.ResizeCanvas();
@@ -11,30 +10,23 @@ function Screen(canvas, zoomoutlevel)
 Screen.sharedUniforms={
 	P: new Float32Array(16)
 }
+Screen.perObjectUniforms={
+	MV: new Float32Array(16)
+}
 Screen.prototype={
 	Draw: function()
 	{
+		gl.colorMask(true, true, true, true);
+		gl.clear(gl.COLOR_BUFFER_BIT);
 		for(var i=0;i<EntityManager.entities.length;++i)
 		{
 			var ent=EntityManager.entities[i];
-			ent.SyncDrawWithPhysics();
+            if(ent.model)
+            {
+                ent.model.tdlmodel.drawPrep(Screen.sharedUniforms); // todo, draw by model
+                ent.Draw(Screen.perObjectUniforms); // perobjectuniforms is just used as a buffer into which entity places the correct stuff
+            }
 		}
-		gl.colorMask(true, true, true, true);
-		gl.clear(gl.COLOR_BUFFER_BIT);
-		for(var cls in this.objects)
-		{
-			ModelManager.models[cls].drawPrep(Screen.sharedUniforms);
-			for(var i=0, len=this.objects[cls].length; i<len; ++i)
-			{
-				this.objects[cls][i].Draw();
-			}
-		}
-	},
-	AddObject: function(o)
-	{
-		if(!this.objects[o.constructor.name])
-			this.objects[o.constructor.name]=[o];
-		else this.objects[o.constructor.name].push(o);
 	},
 	ResizeCanvas: function()
 	{

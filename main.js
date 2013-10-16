@@ -12,7 +12,6 @@ tdl.require('tdl.webgl');
 window.onload=function()
 {
 	var zoomoutlevel = 100.0;
-	var world=new PhysicsWorld(new Box2D.b2Vec2(0.0, -10.0), true);
 	var canvas=createCanvas();
 	var gl = tdl.webgl.setupWebGL(canvas);
 	var framecount=0;
@@ -22,37 +21,32 @@ window.onload=function()
 	TextureManager.Initialize(function()
 	{
 		// initialize world
-		var physworld = new PhysicsWorld(new Box2D.b2Vec2(0.0, -10.0));
-		var world = physworld.world;
+		
+        PhysicsManager.world = new Box2D.b2World(new Box2D.b2Vec2(0.0, -10.0), true);
 
 		// create ground entity (invisible for now)
-		var groundphysobject = physworld.createStaticBody();
 		var edgeshape = new Box2D.b2EdgeShape();
 		edgeshape.Set(new Box2D.b2Vec2(-40.0, 0.0), new Box2D.b2Vec2(40.0, -6.0));
-		groundphysobject.createFixture(edgeshape);
-		EntityManager.AddEntity(null, groundphysobject);
+		var groundphysobject = PhysicsManager.CreateStaticObject(PhysicsManager.CreateDefaultFixtureDef(edgeshape));
+
+		EntityManager.AddDynamicEntity(null, groundphysobject); // oujea
 
 		// create entities
-		var circleshape = physworld.createCircleShape(1.0);
-		var rectshape=physworld.createSquareShape(1.0, 1.0);
+		var circleshape = PhysicsManager.CreateDefaultFixtureDef(PhysicsManager.CreateCircleShape(1.0));
+		var rectshape = PhysicsManager.CreateDefaultFixtureDef(PhysicsManager.CreateSquareShape(1.0, 1.0));
 
 		for(var i=0;i<100;++i)
 		{
-			var physobject = physworld.createDynamicBody();
-			physobject.setPosition(Math.random(), i*2);
-			if(i%2 == 0) physobject.createFixture(circleshape);
-			else physobject.createFixture(rectshape);
-			if(i%2 == 0) EntityManager.AddEntity(new Sphere, physobject);
-			else EntityManager.AddEntity(new Rectangle(1.0, 1.0), physobject);
+            var physobject;
+            if(i%2 == 0) physobject = PhysicsManager.CreateDynamicObject(circleshape);
+            else physobject = PhysicsManager.CreateDynamicObject(rectshape);
+            physobject.SetPosition(Math.random(), i*2);
+
+			if(i%2 == 0) EntityManager.AddDynamicEntity(new Circle, physobject);
+			else EntityManager.AddDynamicEntity(new Rectangle(1.0, 1.0), physobject);
 		}
 
 		var scrn=new Screen(canvas, zoomoutlevel);
-		for(var i=0;i<EntityManager.entities.length;++i)
-		{
-			var ent=EntityManager.entities[i];
-			if(ent.drawableObject)
-				scrn.AddObject(ent.drawableObject);
-		}
 
 		var prevt = window.performance.now();
 		(function draw()
@@ -61,7 +55,7 @@ window.onload=function()
 			var iterations = Math.floor((curt - prevt)*60/1000);
 			//console.log("Simulating " + iterations + " iterations.");
 			for(var i = 0; i < iterations; ++i)
-				world.Step(1.0/60.0, 3, 3);
+				PhysicsManager.world.Step(1.0/60.0, 3, 3);
 			prevt = prevt + iterations*1000/60;
 			++framecount;
 			tdl.webgl.requestAnimationFrame(draw, canvas);

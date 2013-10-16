@@ -1,27 +1,40 @@
 "use strict";
 
-Rectangle.prototype=new DrawableObject;
+function Model() {
+	this.shape=null; // tdl shape
+	this.texture=undefined;
+	this.program=undefined;
+    this.tdlmodel=undefined;
+}
+
+Model.prototype={
+	constructor: Model,
+	Draw: function(uniforms)
+	{
+		this.tdlmodel.draw(uniforms);
+	}
+};
+
+Rectangle.prototype=Object.create(Model.prototype);
 Rectangle.prototype.constructor=Rectangle;
 function Rectangle(width, height)
 {
-	DrawableObject.call(this,arguments);
-	this.LoadProgram("vshader/mvp", "fshader/plain-white");
+//	Model.call(this,arguments);
+	this.program = ProgramManager.LoadProgram("vshader/mvp", "fshader/plain-white");
 	this.shape = createRectangle(width, height);
 	this.texture=TextureManager.GetTexture("another");
 	this.width = width;
 	this.height = height;
-	this.model=ModelManager.GetModel(this);
-	return this;
+	this.tdlmodel=ModelManager.GetModel(this);
 }
 
-Sphere.prototype=new DrawableObject;
-Sphere.prototype.constructor=Sphere;
-function Sphere()
+Circle.prototype=Object.create(Model.prototype);
+Circle.prototype.constructor=Circle;
+function Circle()
 {
-	DrawableObject.call(this,arguments);
-	this.LoadProgram("vshader/mvp", "fshader/plain-white");
+//	Model.call(this,arguments);
+	this.program = ProgramManager.LoadProgram("vshader/mvp", "fshader/plain-white");
 	this.shape = createCircle(1, 20);
 	this.texture=TextureManager.GetTexture("test");
-	this.model=ModelManager.GetModel(this);
-	return this;
+	this.tdlmodel=ModelManager.GetModel(this);
 }
