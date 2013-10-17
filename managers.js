@@ -5,6 +5,10 @@ tdl.require("tdl.fast");
 
 function EntityManager() {}
 EntityManager.entities=[];
+EntityManager.AddEntity = function(drawableObject, physicsobject)
+{
+	EntityManager.entities.push(new Entity(drawableObject, physicsobject));
+}
 EntityManager.AddDynamicEntity = function(drawableObject, physicsobject)
 {
 	EntityManager.entities.push(new DynamicEntity(drawableObject, physicsobject));

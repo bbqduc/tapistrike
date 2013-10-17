@@ -24,12 +24,15 @@ window.onload=function()
 		
         PhysicsManager.world = new Box2D.b2World(new Box2D.b2Vec2(0.0, -10.0), true);
 
+        var edgepoints = [];
+        edgepoints.push([-40.0, 0.0]);
+        edgepoints.push([40.0, -6.0]);
 		// create ground entity (invisible for now)
 		var edgeshape = new Box2D.b2EdgeShape();
 		edgeshape.Set(new Box2D.b2Vec2(-40.0, 0.0), new Box2D.b2Vec2(40.0, -6.0));
 		var groundphysobject = PhysicsManager.CreateStaticObject(PhysicsManager.CreateDefaultFixtureDef(edgeshape));
 
-		EntityManager.AddDynamicEntity(null, groundphysobject); // oujea
+		EntityManager.AddEntity(new LineStrip(edgepoints), groundphysobject);
 
 		// create entities
 		var circleshape = PhysicsManager.CreateDefaultFixtureDef(PhysicsManager.CreateCircleShape(1.0));

@@ -4,7 +4,7 @@ tdl.require("tdl.fast");
 
 function Entity(drawableobject, physicsobject) // this would probably be an abstract class in another language
 {
-	this.drawableObject = drawableobject;
+	this.model = drawableobject;
 	this.physicsObject = physicsobject;
 }
 
@@ -12,7 +12,7 @@ Entity.prototype={
 	constructor: Entity,
     PrepareUniforms: function(uniforms) // this should probably always be overridden
     {
-        tdl.fast.matrix4.identity4(uniforms.MV);
+        tdl.fast.identity4(uniforms.MV);
     },
     Draw: function(uniforms)
     {

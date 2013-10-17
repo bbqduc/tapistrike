@@ -1,5 +1,25 @@
 "use strict";
 
+function createLineStrip(vertarray)
+{
+	var positions = new tdl.primitives.AttribBuffer(2, vertarray.length);
+	var indices = new tdl.primitives.AttribBuffer(1, vertarray.length, 'Uint16Array');
+	var texcoord = new tdl.primitives.AttribBuffer(2, vertarray.length);
+
+    for(var i = 0; i < vertarray.length; ++i)
+    {
+        positions.push(vertarray[i]);
+        indices.push([i]);
+        texcoord.push([vertarray.length/(i+1), 0]);
+    }
+
+	return {
+		position: positions,
+		indices: indices,
+		texCoord: texcoord
+	};
+}
+
 function createRectangle(w,h)
 {
 	var positions = new tdl.primitives.AttribBuffer(2, 4);
