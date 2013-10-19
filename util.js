@@ -150,3 +150,20 @@ function handleMouseWheel(e,screen)
 	screen.zoomoutlevel=Math.max(1,screen.zoomoutlevel);
 	screen.UpdateProjection();
 }
+
+function asyncWait(initArray, cb)
+{
+	var ialen=initArray.length;
+	var iaready=0;
+	var asyncWaitCb=function()
+	{
+		if(++iaready === ialen) cb();
+	};
+	for(var i=0; i<ialen; ++i)
+	{
+		if(initArray[i].hasOwnProperty("Initialize"))
+			initArray[i].Initialize(asyncWaitCb);
+		else
+			throw "Tried to asyncWait without Initialize-function";
+	}
+}

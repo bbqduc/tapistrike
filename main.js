@@ -29,67 +29,64 @@ window.onload=function()
 
 	if(!gl) return;
 
-	ShaderManager.Initialize(function()
+	asyncWait([ShaderManager, TextureManager], function()
 	{
-		TextureManager.Initialize(function()
+		// initialize world
+		PhysicsManager.world = new Box2D.b2World(new Box2D.b2Vec2(0.0, -10.0), true);
+
+		var chainpoints = []
+		chainpoints.push([-70.0, -70.0]);
+		chainpoints.push([70.0, -70.0]);
+		chainpoints.push([70.0, 70.0]);
+		chainpoints.push([-70.0, 70.0]);
+
+		createStaticChainEntity(chainpoints, true);
+
+		var trianglepoints = [];
+		trianglepoints.push([-5, -5]);
+		trianglepoints.push([5, -5]);
+		trianglepoints.push([0, 5]);
+		trianglepoints.push([-10, 5]);
+		var e = createDynamicPolygonEntity(trianglepoints);
+
+		// create entities
+		var circleshape = PhysicsManager.CreateDefaultFixtureDef(PhysicsManager.CreateCircleShape(1.0));
+		var rectshape = PhysicsManager.CreateDefaultFixtureDef(PhysicsManager.CreateSquareShape(1.0, 1.0));
+
+		for(var i=0;i<100;++i)
 		{
-			// initialize world
-			PhysicsManager.world = new Box2D.b2World(new Box2D.b2Vec2(0.0, -10.0), true);
+			var physobject;
+			if(i%2 == 0) physobject = PhysicsManager.CreateDynamicObject(circleshape);
+			else physobject = PhysicsManager.CreateDynamicObject(rectshape);
+			var xpos = Math.random()*138 - 69;
+			var ypos = Math.random()*138 - 69;
+			physobject.SetPosition(xpos, ypos);
 
-			var chainpoints = []
-			chainpoints.push([-70.0, -70.0]);
-			chainpoints.push([70.0, -70.0]);
-			chainpoints.push([70.0, 70.0]);
-			chainpoints.push([-70.0, 70.0]);
+			if(i%2 == 0) EntityManager.AddDynamicEntity(new Circle, physobject);
+			else EntityManager.AddDynamicEntity(new Rectangle(1.0, 1.0), physobject);
+		}
 
-			createStaticChainEntity(chainpoints, true);
+		var scrn=new Screen(canvas, zoomoutlevel);
 
-			var trianglepoints = [];
-			trianglepoints.push([-5, -5]);
-			trianglepoints.push([5, -5]);
-			trianglepoints.push([0, 5]);
-			trianglepoints.push([-10, 5]);
-			var e = createDynamicPolygonEntity(trianglepoints);
-
-			// create entities
-			var circleshape = PhysicsManager.CreateDefaultFixtureDef(PhysicsManager.CreateCircleShape(1.0));
-			var rectshape = PhysicsManager.CreateDefaultFixtureDef(PhysicsManager.CreateSquareShape(1.0, 1.0));
-
-			for(var i=0;i<100;++i)
+		var prevt = window.performance.now();
+		(function draw()
+		{
+			var curt = window.performance.now();
+			var iterations = Math.floor((curt - prevt)*60/1000);
+			//console.log("Simulating " + iterations + " iterations.");
+			for(var i = 0; i < iterations; ++i)
 			{
-				var physobject;
-				if(i%2 == 0) physobject = PhysicsManager.CreateDynamicObject(circleshape);
-				else physobject = PhysicsManager.CreateDynamicObject(rectshape);
-				var xpos = Math.random()*138 - 69;
-				var ypos = Math.random()*138 - 69;
-				physobject.SetPosition(xpos, ypos);
-
-				if(i%2 == 0) EntityManager.AddDynamicEntity(new Circle, physobject);
-				else EntityManager.AddDynamicEntity(new Rectangle(1.0, 1.0), physobject);
+				var bcenter = e.physicsObject.body.GetWorldCenter();
+				e.physicsObject.body.ApplyLinearImpulse(new Box2D.b2Vec2(100*mouseX, 100*mouseY), bcenter);
+				PhysicsManager.world.Step(1.0/60.0, 3, 3);
 			}
-
-			var scrn=new Screen(canvas, zoomoutlevel);
-
-			var prevt = window.performance.now();
-			(function draw()
-			{
-				var curt = window.performance.now();
-				var iterations = Math.floor((curt - prevt)*60/1000);
-				//console.log("Simulating " + iterations + " iterations.");
-				for(var i = 0; i < iterations; ++i)
-				{
-					var bcenter = e.physicsObject.body.GetWorldCenter();
-					e.physicsObject.body.ApplyLinearImpulse(new Box2D.b2Vec2(100*mouseX, 100*mouseY), bcenter);
-					PhysicsManager.world.Step(1.0/60.0, 3, 3);
-				}
-				prevt = prevt + iterations*1000/60;
-				++framecount;
-				tdl.webgl.requestAnimationFrame(draw, canvas);
-				scrn.Draw();
-			})();
-			window.onresize=function(){scrn.ResizeCanvas();};
-			window.onmousewheel=function(e){handleMouseWheel(e,scrn);}
-		});
+			prevt = prevt + iterations*1000/60;
+			++framecount;
+			tdl.webgl.requestAnimationFrame(draw, canvas);
+			scrn.Draw();
+		})();
+		window.onresize=function(){scrn.ResizeCanvas();};
+		window.onmousewheel=function(e){handleMouseWheel(e,scrn);}
 	});
 };
 
