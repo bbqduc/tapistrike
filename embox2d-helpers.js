@@ -65,7 +65,7 @@ function createChainShape(vertices, closedLoop) {
 }
 
 function createPolygonShape(vertices) {
-    var shape = new b2PolygonShape();            
+    var shape = new Box2D.b2PolygonShape();            
     var buffer = Box2D.allocate(vertices.length * 8, 'float', Box2D.ALLOC_STACK);
     var offset = 0;
     for (var i=0;i<vertices.length;i++) {

@@ -32,6 +32,13 @@ window.onload=function()
 
         createStaticChainEntity(chainpoints, true);
 
+        var trianglepoints = [];
+        trianglepoints.push([-5, -5]);
+        trianglepoints.push([5, -5]);
+        trianglepoints.push([0, 5]);
+        trianglepoints.push([-10, 5]);
+        createDynamicPolygonEntity(trianglepoints);
+
 		// create entities
 		var circleshape = PhysicsManager.CreateDefaultFixtureDef(PhysicsManager.CreateCircleShape(1.0));
 		var rectshape = PhysicsManager.CreateDefaultFixtureDef(PhysicsManager.CreateSquareShape(1.0, 1.0));

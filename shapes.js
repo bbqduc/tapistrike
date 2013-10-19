@@ -38,10 +38,17 @@ function LineStrip(vertarray, closedloop)
 }
 LineStrip.prototype=Object.create(Model.prototype);
 LineStrip.prototype.constructor=LineStrip;
-LineStrip.prototype.Draw = function(uniforms)
+
+function Polygon(vertarray)
 {
-	this.tdlmodel.draw(uniforms);
+	this.program = ProgramManager.LoadProgram("vshader/mvp", "fshader/plain-white");
+	this.shape = convertPolygonToTriangleStrip(vertarray);
+	this.texture=TextureManager.GetTexture("test");
+	this.tdlmodel=ModelManager.GetModel(this);
+    this.tdlmodel.mode = gl.TRIANGLE_STRIP;
 }
+Polygon.prototype=Object.create(Model.prototype);
+Polygon.prototype.constructor=Polygon;
 
 Circle.prototype=Object.create(Model.prototype);
 Circle.prototype.constructor=Circle;
