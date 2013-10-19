@@ -16,6 +16,17 @@ window.onload=function()
 	var gl = tdl.webgl.setupWebGL(canvas);
 	var framecount=0;
 
+    var mouseX = 0;
+    var mouseY = 0;
+
+    window.onmousemove = function handleMouseMove(event)
+    {
+        event = event || window.event; // apparently this is for IE?
+        mouseX = 2*(event.clientX / window.innerWidth) - 1;
+        mouseY = -(2*(event.clientY / window.innerHeight) - 1);
+        console.log("X : " + mouseX + " Y : " + mouseY);
+    }
+
 	if(!gl) return;
 
 	TextureManager.Initialize(function()
@@ -37,7 +48,7 @@ window.onload=function()
         trianglepoints.push([5, -5]);
         trianglepoints.push([0, 5]);
         trianglepoints.push([-10, 5]);
-        createDynamicPolygonEntity(trianglepoints);
+        var e = createDynamicPolygonEntity(trianglepoints);
 
 		// create entities
 		var circleshape = PhysicsManager.CreateDefaultFixtureDef(PhysicsManager.CreateCircleShape(1.0));
@@ -65,7 +76,11 @@ window.onload=function()
 			var iterations = Math.floor((curt - prevt)*60/1000);
 			//console.log("Simulating " + iterations + " iterations.");
 			for(var i = 0; i < iterations; ++i)
-				PhysicsManager.world.Step(1.0/60.0, 3, 3);
+            {
+                var bcenter = e.physicsObject.body.GetWorldCenter();
+                e.physicsObject.body.ApplyLinearImpulse(new Box2D.b2Vec2(100*mouseX, 100*mouseY), bcenter);
+                PhysicsManager.world.Step(1.0/60.0, 3, 3);
+            }
 			prevt = prevt + iterations*1000/60;
 			++framecount;
 			tdl.webgl.requestAnimationFrame(draw, canvas);
@@ -75,3 +90,4 @@ window.onload=function()
 		window.onmousewheel=function(e){handleMouseWheel(e,scrn);}
 	});
 };
+

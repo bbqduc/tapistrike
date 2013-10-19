@@ -5,17 +5,22 @@ tdl.require("tdl.fast");
 
 function EntityManager() {}
 EntityManager.entities=[];
+EntityManager.AddConstructedEntity = function(entity)
+{
+	EntityManager.entities.push(entity);
+    return entity;
+}
 EntityManager.AddEntity = function(drawableObject, physicsobject)
 {
-	EntityManager.entities.push(new Entity(drawableObject, physicsobject));
+	return this.AddConstructedEntity(new Entity(drawableObject, physicsobject));
 }
 EntityManager.AddDynamicEntity = function(drawableObject, physicsobject)
 {
-	EntityManager.entities.push(new DynamicEntity(drawableObject, physicsobject));
+	return this.AddConstructedEntity(new DynamicEntity(drawableObject, physicsobject));
 }
 EntityManager.AddStaticEntity = function(drawableObject, physicsobject)
 {
-	EntityManager.entities.push(new StaticEntity(drawableObject, physicsobject));
+	return this.AddConstructedEntity(new StaticEntity(drawableObject, physicsobject));
 }
 
 function ProgramManager() {}

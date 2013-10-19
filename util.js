@@ -40,7 +40,7 @@ function createDynamicPolygonEntity(vertarray)
         var polygonshape = createPolygonShape(tmpchainpoints);
         var chainmodel = new Polygon(vertarray);
         var physbody = PhysicsManager.CreateDynamicObject(PhysicsManager.CreateDefaultFixtureDef(polygonshape));
-        EntityManager.AddDynamicEntity(chainmodel, physbody);
+        return EntityManager.AddDynamicEntity(chainmodel, physbody);
 }
 
 function createStaticChainEntity(vertarray, closedloop)
@@ -53,7 +53,7 @@ function createStaticChainEntity(vertarray, closedloop)
         var chainshape = createChainShape(tmpchainpoints, closedloop);
         var chainmodel = new LineStrip(vertarray, closedloop);
         var physbody = PhysicsManager.CreateStaticObject(PhysicsManager.CreateDefaultFixtureDef(chainshape));
-        EntityManager.AddEntity(chainmodel, physbody);
+        return EntityManager.AddEntity(chainmodel, physbody);
 }
 
 function createLineStrip(vertarray, closedloop)
