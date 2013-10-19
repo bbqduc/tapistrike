@@ -41,7 +41,9 @@ window.onload=function()
             var physobject;
             if(i%2 == 0) physobject = PhysicsManager.CreateDynamicObject(circleshape);
             else physobject = PhysicsManager.CreateDynamicObject(rectshape);
-            physobject.SetPosition(Math.random(), 69.0);
+            var xpos = Math.random()*138 - 69;
+            var ypos = Math.random()*138 - 69;
+            physobject.SetPosition(xpos, ypos);
 
 			if(i%2 == 0) EntityManager.AddDynamicEntity(new Circle, physobject);
 			else EntityManager.AddDynamicEntity(new Rectangle(1.0, 1.0), physobject);
