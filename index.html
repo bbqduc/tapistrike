@@ -21,35 +21,6 @@ html, body {
     height: 100%;
 }
 </style>
-<script id="fshader/plain-white" type="x-shader/x-fragment">
-	#ifdef GL_ES
-		precision highp float;
-	#endif
-	uniform sampler2D texsampler;
-	varying vec2 texCoord_out;
-    void main(void)
-    {
-		vec4 tex=texture2D(texsampler, texCoord_out);
-//        gl_FragColor = vec4(1.0,1.0,1.0, 1.0);
-        gl_FragColor = vec4(tex.rgb, 1.0);
-    }
-</script>
-
-<script id="vshader/mvp" type="x-shader/x-vertex">
-    attribute vec2 position;
-
-    uniform mat4 MV;
-    uniform mat4 P;
-
-	attribute vec2 texCoord; // tdl uses this variablename for texture coordinates
-	varying vec2 texCoord_out;
-
-    void main(void)
-    {
-		texCoord_out=texCoord;
-        gl_Position = P * MV * vec4(position, 0.0, 1.0);
-    }
-</script>
 <script type="text/javascript" src="tdl/tdl/base.js"></script>
 <script type="text/javascript" src="box2d.js"></script>
 <script type="text/javascript" src="embox2d-helpers.js"></script>

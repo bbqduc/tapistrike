@@ -25,12 +25,12 @@ EntityManager.AddStaticEntity = function(drawableObject, physicsobject)
 
 function ProgramManager() {}
 ProgramManager.programs={};
-ProgramManager.LoadProgram=function(vec,frag)
+ProgramManager.LoadProgram=function(vert,frag)
 {
-	var catenated=vec+frag;
+	var catenated=vert+frag;
 	var progs=ProgramManager.programs;
 	if(!progs[catenated])
-		progs[catenated]=tdl.programs.loadProgramFromScriptTags(vec, frag);
+		progs[catenated]=new tdl.programs.loadProgram(ShaderManager.GetShader(vert), ShaderManager.GetShader(frag));
 	return progs[catenated];
 };
 
@@ -47,6 +47,49 @@ ModelManager.GetModel=function(drawableobject)
 		models[classname]=new tdl.models.Model(drawableobject.program, drawableobject.shape, {texsampler: drawableobject.texture.texture});
 	}
 	return models[classname];
+};
+
+function ShaderManager() {}
+ShaderManager.initialized=false;
+ShaderManager.shaders={
+	texturedVert: "shaders/mvp.vert",
+	texturedFrag: "shaders/textured.frag"
+};
+ShaderManager.Initialize=function(cb)
+{
+	if(!XMLHttpRequest) throw "TODO: This browser does not support XMLHttpRequest";
+	var ready=0;
+	var shadercount=Object.keys(ShaderManager.shaders).length;
+	for(var sname in ShaderManager.shaders)
+	{
+		(function(sname)
+		{
+			var req=new XMLHttpRequest();
+			req.open("GET", ShaderManager.shaders[sname], true);
+			req.onload=function(e)
+			{
+				ShaderManager.shaders[sname]=req.responseText;
+				if(++ready==shadercount)
+				{
+					console.log("ShaderManager initialized");
+					ShaderManager.initialized=true;
+					cb();
+				}
+			}
+			req.onerror=function(e)
+			{
+				throw e;
+			}
+			req.send(null);
+		})(sname);
+	}
+};
+ShaderManager.GetShader=function(sname)
+{
+	if(!ShaderManager.initialized) throw "ShaderManager not initialized";
+	var s=ShaderManager.shaders[sname];
+	if(!s) throw "Shader " + sname + " not found";
+	return s;
 };
 
 function TextureManager() {}
@@ -72,14 +115,14 @@ TextureManager.Initialize=function(cb)
 			}
 		}), id: texid++};
 	}
-}
+};
 TextureManager.GetTexture=function(texname)
 {
 	if(!TextureManager.initialized) throw "TextureManager not initialized";
 	var tex=TextureManager.textures[texname];
 	if(!tex) throw "Texture " + texname + " not found";
 	return tex;
-}
+};
 
 function PhysicsManager(){}
 PhysicsManager.CreateStaticObject = function(fixturedef) // todo : maybe not the best interface design

@@ -19,8 +19,7 @@ Rectangle.prototype=Object.create(Model.prototype);
 Rectangle.prototype.constructor=Rectangle;
 function Rectangle(width, height)
 {
-//	Model.call(this,arguments);
-	this.program = ProgramManager.LoadProgram("vshader/mvp", "fshader/plain-white");
+	this.program = ProgramManager.LoadProgram("texturedVert", "texturedFrag");
 	this.shape = createRectangle(width, height);
 	this.texture=TextureManager.GetTexture("another");
 	this.width = width;
@@ -30,7 +29,7 @@ function Rectangle(width, height)
 
 function LineStrip(vertarray, closedloop)
 {
-	this.program = ProgramManager.LoadProgram("vshader/mvp", "fshader/plain-white");
+	this.program = ProgramManager.LoadProgram("texturedVert", "texturedFrag");
 	this.shape = createLineStrip(vertarray, closedloop);
 	this.texture=TextureManager.GetTexture("test");
 	this.tdlmodel=ModelManager.GetModel(this);
@@ -41,7 +40,7 @@ LineStrip.prototype.constructor=LineStrip;
 
 function Polygon(vertarray)
 {
-	this.program = ProgramManager.LoadProgram("vshader/mvp", "fshader/plain-white");
+	this.program = ProgramManager.LoadProgram("texturedVert", "texturedFrag");
 	this.shape = convertPolygonToTriangleStrip(vertarray);
 	this.texture=TextureManager.GetTexture("test");
 	this.tdlmodel=ModelManager.GetModel(this);
@@ -54,8 +53,7 @@ Circle.prototype=Object.create(Model.prototype);
 Circle.prototype.constructor=Circle;
 function Circle()
 {
-//	Model.call(this,arguments);
-	this.program = ProgramManager.LoadProgram("vshader/mvp", "fshader/plain-white");
+	this.program = ProgramManager.LoadProgram("texturedVert", "texturedFrag");
 	this.shape = createCircle(1, 20);
 	this.texture=TextureManager.GetTexture("test");
 	this.tdlmodel=ModelManager.GetModel(this);
