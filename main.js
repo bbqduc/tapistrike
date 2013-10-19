@@ -24,15 +24,13 @@ window.onload=function()
 		
         PhysicsManager.world = new Box2D.b2World(new Box2D.b2Vec2(0.0, -10.0), true);
 
-        var edgepoints = [];
-        edgepoints.push([-40.0, 0.0]);
-        edgepoints.push([40.0, -6.0]);
-		// create ground entity (invisible for now)
-		var edgeshape = new Box2D.b2EdgeShape();
-		edgeshape.Set(new Box2D.b2Vec2(-40.0, 0.0), new Box2D.b2Vec2(40.0, -6.0));
-		var groundphysobject = PhysicsManager.CreateStaticObject(PhysicsManager.CreateDefaultFixtureDef(edgeshape));
+        var chainpoints = []
+        chainpoints.push([-70.0, -70.0]);
+        chainpoints.push([70.0, -70.0]);
+        chainpoints.push([70.0, 70.0]);
+        chainpoints.push([-70.0, 70.0]);
 
-		EntityManager.AddEntity(new LineStrip(edgepoints), groundphysobject);
+        createStaticChainEntity(chainpoints, true);
 
 		// create entities
 		var circleshape = PhysicsManager.CreateDefaultFixtureDef(PhysicsManager.CreateCircleShape(1.0));
@@ -43,7 +41,7 @@ window.onload=function()
             var physobject;
             if(i%2 == 0) physobject = PhysicsManager.CreateDynamicObject(circleshape);
             else physobject = PhysicsManager.CreateDynamicObject(rectshape);
-            physobject.SetPosition(Math.random(), i*2);
+            physobject.SetPosition(Math.random(), 69.0);
 
 			if(i%2 == 0) EntityManager.AddDynamicEntity(new Circle, physobject);
 			else EntityManager.AddDynamicEntity(new Rectangle(1.0, 1.0), physobject);

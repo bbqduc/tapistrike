@@ -1,9 +1,24 @@
 "use strict";
 
-function createLineStrip(vertarray)
+function createStaticChainEntity(vertarray, closedloop)
 {
+        var tmpchainpoints = [];
+        for(var i = 0; i < vertarray.length; ++i)
+        {
+            tmpchainpoints.push(new Box2D.b2Vec2(vertarray[i][0], vertarray[i][1]));
+        }
+        var chainshape = createChainShape(tmpchainpoints, closedloop);
+        var chainmodel = new LineStrip(vertarray, closedloop);
+        var physbody = PhysicsManager.CreateStaticObject(PhysicsManager.CreateDefaultFixtureDef(chainshape));
+        EntityManager.AddEntity(chainmodel, physbody);
+}
+
+function createLineStrip(vertarray, closedloop)
+{
+    var numindices = vertarray.length;
+    if(closedloop) numindices++;
 	var positions = new tdl.primitives.AttribBuffer(2, vertarray.length);
-	var indices = new tdl.primitives.AttribBuffer(1, vertarray.length, 'Uint16Array');
+	var indices = new tdl.primitives.AttribBuffer(1, numindices, 'Uint16Array');
 	var texcoord = new tdl.primitives.AttribBuffer(2, vertarray.length);
 
     for(var i = 0; i < vertarray.length; ++i)
@@ -12,6 +27,7 @@ function createLineStrip(vertarray)
         indices.push([i]);
         texcoord.push([vertarray.length/(i+1), 0]);
     }
+    if(closedloop) indices.push([0]);
 
 	return {
 		position: positions,

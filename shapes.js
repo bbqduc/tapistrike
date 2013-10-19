@@ -28,13 +28,13 @@ function Rectangle(width, height)
 	this.tdlmodel=ModelManager.GetModel(this);
 }
 
-function LineStrip(vertarray)
+function LineStrip(vertarray, closedloop)
 {
 	this.program = ProgramManager.LoadProgram("vshader/mvp", "fshader/plain-white");
-	this.shape = createLineStrip(vertarray);
+	this.shape = createLineStrip(vertarray, closedloop);
 	this.texture=TextureManager.GetTexture("test");
 	this.tdlmodel=ModelManager.GetModel(this);
-    this.tdlmodel.mode = gl.LINES;
+    this.tdlmodel.mode = gl.LINE_STRIP;
 }
 LineStrip.prototype=Object.create(Model.prototype);
 LineStrip.prototype.constructor=LineStrip;

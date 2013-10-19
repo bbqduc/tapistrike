@@ -4,6 +4,7 @@
   ],
   "loadEagerly": [
     "tdl/tdl/*.js",
-    "box2d.js"
+    "box2d.js",
+    "embox2d-helpers.js"
   ]
 }
