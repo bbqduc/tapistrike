@@ -21,11 +21,11 @@ Screen.prototype={
 		for(var i=0;i<EntityManager.entities.length;++i)
 		{
 			var ent=EntityManager.entities[i];
-            if(ent.model)
-            {
-                ent.model.tdlmodel.drawPrep(Screen.sharedUniforms); // todo, draw by model
-                ent.Draw(Screen.perObjectUniforms); // perobjectuniforms is just used as a buffer into which entity places the correct stuff
-            }
+			if(ent.model)
+			{
+				ent.model.tdlmodel.drawPrep(Screen.sharedUniforms); // todo, draw by model
+				ent.Draw(Screen.perObjectUniforms); // perobjectuniforms is just used as a buffer into which entity places the correct stuff
+			}
 		}
 	},
 	AddObject: function(o)

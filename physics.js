@@ -1,36 +1,36 @@
-        "use strict";
+		"use strict";
 
 function PhysicsObject(body, fixturedef) // todo : maybe need some redesign here
 {
-    this.body = body;
-    this.body.CreateFixture(fixturedef);
+	this.body = body;
+	this.body.CreateFixture(fixturedef);
 }
 
 PhysicsObject.prototype = {
-    GetX : function()
-    {
-        return this.body.GetPosition().get_x();
-    },
-    GetY : function()
-    {
-        return this.body.GetPosition().get_y();
-    },
-    GetAngle : function()
-    {
-        return this.body.GetAngle();
-    },
-    SetAngle : function(angle)
-    {
-        this.SetTransform(this.GetX(), this.GetY(), angle);
-    },
-    SetPosition : function(x,y)
-    {
-        this.SetTransform(x, y, this.GetAngle());
-    },
-    SetTransform : function(x,y,angle)
-    {
-        this.body.SetTransform(new Box2D.b2Vec2(x,y), angle);
-    }
+	GetX : function()
+	{
+		return this.body.GetPosition().get_x();
+	},
+	GetY : function()
+	{
+		return this.body.GetPosition().get_y();
+	},
+	GetAngle : function()
+	{
+		return this.body.GetAngle();
+	},
+	SetAngle : function(angle)
+	{
+		this.SetTransform(this.GetX(), this.GetY(), angle);
+	},
+	SetPosition : function(x,y)
+	{
+		this.SetTransform(x, y, this.GetAngle());
+	},
+	SetTransform : function(x,y,angle)
+	{
+		this.body.SetTransform(new Box2D.b2Vec2(x,y), angle);
+	}
 }
 
 

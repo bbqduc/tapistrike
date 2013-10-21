@@ -4,7 +4,7 @@ function Model() {
 	this.shape=null; // tdl shape
 	this.texture=undefined;
 	this.program=undefined;
-    this.tdlmodel=undefined;
+	this.tdlmodel=undefined;
 }
 
 Model.prototype={
@@ -33,7 +33,7 @@ function LineStrip(vertarray, closedloop)
 	this.shape = createLineStrip(vertarray, closedloop);
 	this.texture=TextureManager.GetTexture("test");
 	this.tdlmodel=ModelManager.GetModel(this);
-    this.tdlmodel.mode = gl.LINE_STRIP;
+	this.tdlmodel.mode = gl.LINE_STRIP;
 }
 LineStrip.prototype=Object.create(Model.prototype);
 LineStrip.prototype.constructor=LineStrip;
@@ -44,7 +44,7 @@ function Polygon(vertarray)
 	this.shape = convertPolygonToTriangleStrip(vertarray);
 	this.texture=TextureManager.GetTexture("test");
 	this.tdlmodel=ModelManager.GetModel(this);
-    this.tdlmodel.mode = gl.TRIANGLE_STRIP;
+	this.tdlmodel.mode = gl.TRIANGLE_STRIP;
 }
 Polygon.prototype=Object.create(Model.prototype);
 Polygon.prototype.constructor=Polygon;

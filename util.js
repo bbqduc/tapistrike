@@ -2,7 +2,7 @@
 
 function convertPolygonToTriangleStrip(vertarray)
 {
-    var numvertices = vertarray.length;
+	var numvertices = vertarray.length;
 	var positions = new tdl.primitives.AttribBuffer(2, numvertices);
 	var indices = new tdl.primitives.AttribBuffer(1, numvertices, 'Uint16Array');
 	var texcoord = new tdl.primitives.AttribBuffer(2, numvertices);
@@ -14,14 +14,14 @@ function convertPolygonToTriangleStrip(vertarray)
 		positions.push([x, y]);
 		texcoord.push([x/2+0.5,y/2+0.5]);
 	}
-    indices.push([0]);
-    for(var i=1;i<numvertices;++i)
-    {
-        if(i % 2 == 0)
-            indices.push([numvertices - Math.floor(i/2)]);
-        else
-            indices.push([1+Math.floor(i/2)]);
-    }
+	indices.push([0]);
+	for(var i=1;i<numvertices;++i)
+	{
+		if(i % 2 == 0)
+			indices.push([numvertices - Math.floor(i/2)]);
+		else
+			indices.push([1+Math.floor(i/2)]);
+	}
 
 	return {
 		position: positions,
@@ -32,45 +32,45 @@ function convertPolygonToTriangleStrip(vertarray)
 
 function createDynamicPolygonEntity(vertarray)
 {
-        var tmpchainpoints = [];
-        for(var i = 0; i < vertarray.length; ++i)
-        {
-            tmpchainpoints.push(new Box2D.b2Vec2(vertarray[i][0], vertarray[i][1]));
-        }
-        var polygonshape = createPolygonShape(tmpchainpoints);
-        var chainmodel = new Polygon(vertarray);
-        var physbody = PhysicsManager.CreateDynamicObject(PhysicsManager.CreateDefaultFixtureDef(polygonshape));
-        return EntityManager.AddDynamicEntity(chainmodel, physbody);
+		var tmpchainpoints = [];
+		for(var i = 0; i < vertarray.length; ++i)
+		{
+			tmpchainpoints.push(new Box2D.b2Vec2(vertarray[i][0], vertarray[i][1]));
+		}
+		var polygonshape = createPolygonShape(tmpchainpoints);
+		var chainmodel = new Polygon(vertarray);
+		var physbody = PhysicsManager.CreateDynamicObject(PhysicsManager.CreateDefaultFixtureDef(polygonshape));
+		return EntityManager.AddDynamicEntity(chainmodel, physbody);
 }
 
 function createStaticChainEntity(vertarray, closedloop)
 {
-        var tmpchainpoints = [];
-        for(var i = 0; i < vertarray.length; ++i)
-        {
-            tmpchainpoints.push(new Box2D.b2Vec2(vertarray[i][0], vertarray[i][1]));
-        }
-        var chainshape = createChainShape(tmpchainpoints, closedloop);
-        var chainmodel = new LineStrip(vertarray, closedloop);
-        var physbody = PhysicsManager.CreateStaticObject(PhysicsManager.CreateDefaultFixtureDef(chainshape));
-        return EntityManager.AddEntity(chainmodel, physbody);
+		var tmpchainpoints = [];
+		for(var i = 0; i < vertarray.length; ++i)
+		{
+			tmpchainpoints.push(new Box2D.b2Vec2(vertarray[i][0], vertarray[i][1]));
+		}
+		var chainshape = createChainShape(tmpchainpoints, closedloop);
+		var chainmodel = new LineStrip(vertarray, closedloop);
+		var physbody = PhysicsManager.CreateStaticObject(PhysicsManager.CreateDefaultFixtureDef(chainshape));
+		return EntityManager.AddEntity(chainmodel, physbody);
 }
 
 function createLineStrip(vertarray, closedloop)
 {
-    var numindices = vertarray.length;
-    if(closedloop) numindices++;
+	var numindices = vertarray.length;
+	if(closedloop) numindices++;
 	var positions = new tdl.primitives.AttribBuffer(2, vertarray.length);
 	var indices = new tdl.primitives.AttribBuffer(1, numindices, 'Uint16Array');
 	var texcoord = new tdl.primitives.AttribBuffer(2, vertarray.length);
 
-    for(var i = 0; i < vertarray.length; ++i)
-    {
-        positions.push(vertarray[i]);
-        indices.push([i]);
-        texcoord.push([vertarray.length/(i+1), 0]);
-    }
-    if(closedloop) indices.push([0]);
+	for(var i = 0; i < vertarray.length; ++i)
+	{
+		positions.push(vertarray[i]);
+		indices.push([i]);
+		texcoord.push([vertarray.length/(i+1), 0]);
+	}
+	if(closedloop) indices.push([0]);
 
 	return {
 		position: positions,

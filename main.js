@@ -16,8 +16,8 @@ window.onload=function()
 	var gl = tdl.webgl.setupWebGL(canvas);
 	var framecount=0;
 
-    var mouseX = 0;
-    var mouseY = 0;
+	var mouseX = 0;
+	var mouseY = 0;
 	var wdown = true;
 
 	window.onkeydown = function(e) {
@@ -36,12 +36,12 @@ window.onload=function()
 		}
 	}
 
-    window.onmousemove = function handleMouseMove(event)
-    {
-        event = event || window.event; // apparently this is for IE?
-        mouseX = 2*(event.clientX / window.innerWidth) - 1;
-        mouseY = -(2*(event.clientY / window.innerHeight) - 1);
-    }
+	window.onmousemove = function handleMouseMove(event)
+	{
+		event = event || window.event; // apparently this is for IE?
+		mouseX = 2*(event.clientX / window.innerWidth) - 1;
+		mouseY = -(2*(event.clientY / window.innerHeight) - 1);
+	}
 
 	if(!gl) return;
 
@@ -94,7 +94,7 @@ window.onload=function()
 			{
 				rotateTowardMouse(e);
 				applyThrusters(e);
-				PhysicsManager.world.Step(1.0/60.0, 3, 3);
+				PhysicsManager.world.Step(1.0/60.0, 1, 1);
 			}
 			prevt = prevt + iterations*1000/60;
 			++framecount;
