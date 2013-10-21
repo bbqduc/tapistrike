@@ -18,13 +18,29 @@ window.onload=function()
 
     var mouseX = 0;
     var mouseY = 0;
+	var wdown = true;
+
+	window.onkeydown = function(e) {
+		var key = e.keyCode ? e.keyCode : e.which;
+		if(key == 87)
+		{
+			wdown = true;
+		}
+	}
+
+	window.onkeyup = function(e) {
+		var key = e.keyCode ? e.keyCode : e.which;
+		if(key == 87)
+		{
+			wdown = false;
+		}
+	}
 
     window.onmousemove = function handleMouseMove(event)
     {
         event = event || window.event; // apparently this is for IE?
         mouseX = 2*(event.clientX / window.innerWidth) - 1;
         mouseY = -(2*(event.clientY / window.innerHeight) - 1);
-        console.log("X : " + mouseX + " Y : " + mouseY);
     }
 
 	if(!gl) return;
@@ -43,10 +59,10 @@ window.onload=function()
 		createStaticChainEntity(chainpoints, true);
 
 		var trianglepoints = [];
-		trianglepoints.push([-5, -5]);
-		trianglepoints.push([5, -5]);
+		trianglepoints.push([-5, 0]);
+		trianglepoints.push([0, -5]);
+		trianglepoints.push([15, 0]);
 		trianglepoints.push([0, 5]);
-		trianglepoints.push([-10, 5]);
 		var e = createDynamicPolygonEntity(trianglepoints);
 
 		// create entities
@@ -76,8 +92,8 @@ window.onload=function()
 			//console.log("Simulating " + iterations + " iterations.");
 			for(var i = 0; i < iterations; ++i)
 			{
-				var bcenter = e.physicsObject.body.GetWorldCenter();
-				e.physicsObject.body.ApplyLinearImpulse(new Box2D.b2Vec2(100*mouseX, 100*mouseY), bcenter);
+				rotateTowardMouse(e);
+				applyThrusters(e);
 				PhysicsManager.world.Step(1.0/60.0, 3, 3);
 			}
 			prevt = prevt + iterations*1000/60;
@@ -88,5 +104,30 @@ window.onload=function()
 		window.onresize=function(){scrn.ResizeCanvas();};
 		window.onmousewheel=function(e){handleMouseWheel(e,scrn);}
 	});
+
+	function rotateTowardMouse(e)
+	{
+		var len = Math.sqrt(mouseX * mouseX + mouseY * mouseY);
+		var normX = mouseX / len;
+		var angle = Math.acos(normX); // desired angle
+		if(mouseY < 0) angle = 2*Math.PI - angle;
+		if(isNaN(angle)) angle=0;
+		var nextangle = e.physicsObject.GetAngle() + e.physicsObject.body.GetAngularVelocity() / 30.0;
+		var totrot = (angle - nextangle);
+		while(totrot < -Math.PI) totrot += 2*Math.PI;
+		while(totrot > Math.PI) totrot -= 2*Math.PI;
+		var velocity = totrot * 30;
+		var impulse = e.physicsObject.body.GetInertia() * velocity;
+		e.physicsObject.body.ApplyAngularImpulse(impulse);
+		//				e.physicsObject.SetAngle(angle);
+	}
+
+	function applyThrusters(e)
+	{
+		var bcenter = e.physicsObject.body.GetWorldCenter();
+		var bvector = e.physicsObject.body.GetWorldVector(new Box2D.b2Vec2(100.0,0.0));
+		if(wdown)
+			e.physicsObject.body.ApplyLinearImpulse(bvector, bcenter);
+	}
 };
 
