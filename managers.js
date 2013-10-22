@@ -9,19 +9,19 @@ EntityManager.AddConstructedEntity = function(entity)
 {
 	EntityManager.entities.push(entity);
 	return entity;
-}
+};
 EntityManager.AddEntity = function(drawableObject, physicsobject)
 {
 	return this.AddConstructedEntity(new Entity(drawableObject, physicsobject));
-}
+};
 EntityManager.AddDynamicEntity = function(drawableObject, physicsobject)
 {
 	return this.AddConstructedEntity(new DynamicEntity(drawableObject, physicsobject));
-}
+};
 EntityManager.AddStaticEntity = function(drawableObject, physicsobject)
 {
 	return this.AddConstructedEntity(new StaticEntity(drawableObject, physicsobject));
-}
+};
 
 function ProgramManager() {}
 ProgramManager.programs={};
@@ -60,28 +60,32 @@ ShaderManager.Initialize=function(cb)
 	if(!XMLHttpRequest) throw "TODO: This browser does not support XMLHttpRequest";
 	var ready=0;
 	var shadercount=Object.keys(ShaderManager.shaders).length;
+	function loadShaderSource(sname)
+	{
+		var req=new XMLHttpRequest();
+		req.open("GET", ShaderManager.shaders[sname], true);
+		req.onload=function()
+		{
+			ShaderManager.shaders[sname]=req.responseText;
+			if(++ready===shadercount)
+			{
+				console.log("ShaderManager initialized");
+				ShaderManager.initialized=true;
+				cb();
+			}
+		};
+		req.onerror=function(e)
+		{
+			throw e;
+		};
+		req.send(null);
+	}
 	for(var sname in ShaderManager.shaders)
 	{
-		(function(sname)
+		if(ShaderManager.shaders.hasOwnProperty(sname))
 		{
-			var req=new XMLHttpRequest();
-			req.open("GET", ShaderManager.shaders[sname], true);
-			req.onload=function(e)
-			{
-				ShaderManager.shaders[sname]=req.responseText;
-				if(++ready==shadercount)
-				{
-					console.log("ShaderManager initialized");
-					ShaderManager.initialized=true;
-					cb();
-				}
-			}
-			req.onerror=function(e)
-			{
-				throw e;
-			}
-			req.send(null);
-		})(sname);
+			loadShaderSource(sname);
+		}
 	}
 };
 ShaderManager.GetShader=function(sname)
@@ -100,20 +104,28 @@ TextureManager.textures={
 };
 TextureManager.Initialize=function(cb)
 {
+	function loadDone()
+	{// Call callback when all textures are loaded
+		if(++ready===texturecount)
+		{
+			console.log("Texture manager initialized");
+			TextureManager.initialized=true;
+			cb();
+		}
+	}
+
 	var texid=1;
 	var ready=0;
 	var texturecount=Object.keys(TextureManager.textures).length;
 	for(var texname in TextureManager.textures)
 	{// Replace texture path with actual texture id
-		TextureManager.textures[texname]={texture: tdl.textures.loadTexture(TextureManager.textures[texname], true, function()
-		{// Call callback when all textures are loaded
-			if(++ready==texturecount)
-			{
-				console.log("Texture manager initialized");
-				TextureManager.initialized=true;
-				cb();
-			}
-		}), id: texid++};
+		if(TextureManager.textures.hasOwnProperty(texname))
+		{
+			TextureManager.textures[texname]={
+				texture: tdl.textures.loadTexture(TextureManager.textures[texname], true, loadDone),
+				id: texid++
+			};
+		}
 	}
 };
 TextureManager.GetTexture=function(texname)
@@ -130,27 +142,27 @@ PhysicsManager.CreateStaticObject = function(fixturedef) // todo : maybe not the
 	var bodydef = new Box2D.b2BodyDef();
 	var body = PhysicsManager.world.CreateBody(bodydef);
 	return new PhysicsObject(body, fixturedef);
-}
+};
 PhysicsManager.CreateDynamicObject = function(fixturedef) // todo : maybe not the best interface design
 {
 	var bodydef = new Box2D.b2BodyDef();
 	bodydef.set_type(Box2D.b2_dynamicBody);
 	var body = PhysicsManager.world.CreateBody(bodydef);
 	return new PhysicsObject(body, fixturedef);
-}
+};
 PhysicsManager.CreateCircleShape = function(radius)
 {
 	var shape = new Box2D.b2CircleShape();
 	shape.set_m_p(new Box2D.b2Vec2(0.0, 0.0));
 	shape.set_m_radius(radius);
 	return shape;
-}
+};
 PhysicsManager.CreateSquareShape = function(width, height)
 {
 	var shape = new Box2D.b2PolygonShape();
 	shape.SetAsBox(width, height);
 	return shape;
-}
+};
 PhysicsManager.CreateDefaultFixtureDef = function(shape)
 {
 	var fixturedef = new Box2D.b2FixtureDef();
@@ -158,4 +170,4 @@ PhysicsManager.CreateDefaultFixtureDef = function(shape)
 	fixturedef.set_friction(0.3);
 	fixturedef.set_density(1);
 	return fixturedef;
-}
+};

@@ -9,10 +9,10 @@ function Screen(canvas, zoomoutlevel)
 }
 Screen.sharedUniforms={
 	P: new Float32Array(16)
-}
+};
 Screen.perObjectUniforms={
 	MV: new Float32Array(16)
-}
+};
 Screen.prototype={
 	Draw: function()
 	{

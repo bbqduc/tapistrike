@@ -1,4 +1,4 @@
-		"use strict";
+"use strict";
 
 function PhysicsObject(body, fixturedef) // todo : maybe need some redesign here
 {
@@ -31,7 +31,7 @@ PhysicsObject.prototype = {
 	{
 		this.body.SetTransform(new Box2D.b2Vec2(x,y), angle);
 	}
-}
+};
 
 
 /*function PhysicsWorld(gravity, sleep)

@@ -17,7 +17,7 @@ function convertPolygonToTriangleStrip(vertarray)
 	indices.push([0]);
 	for(var i=1;i<numvertices;++i)
 	{
-		if(i % 2 == 0)
+		if(i % 2 === 0)
 			indices.push([numvertices - Math.floor(i/2)]);
 		else
 			indices.push([1+Math.floor(i/2)]);

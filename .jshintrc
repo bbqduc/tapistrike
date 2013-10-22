@@ -1,0 +1,10 @@
+{
+	"unused": true,
+	"globalstrict": true,
+	"curly": false,
+	"eqeqeq": true,
+	"forin": true,
+	"browser": true,
+	"undef": false,
+	"-W117": true // Do not whine about undefined things
+}

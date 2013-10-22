@@ -22,26 +22,26 @@ window.onload=function()
 
 	window.onkeydown = function(e) {
 		var key = e.keyCode ? e.keyCode : e.which;
-		if(key == 87)
+		if(key === 87)
 		{
 			wdown = true;
 		}
-	}
+	};
 
 	window.onkeyup = function(e) {
 		var key = e.keyCode ? e.keyCode : e.which;
-		if(key == 87)
+		if(key === 87)
 		{
 			wdown = false;
 		}
-	}
+	};
 
 	window.onmousemove = function handleMouseMove(event)
 	{
 		event = event || window.event; // apparently this is for IE?
 		mouseX = 2*(event.clientX / window.innerWidth) - 1;
 		mouseY = -(2*(event.clientY / window.innerHeight) - 1);
-	}
+	};
 
 	if(!gl) return;
 
@@ -50,7 +50,7 @@ window.onload=function()
 		// initialize world
 		PhysicsManager.world = new Box2D.b2World(new Box2D.b2Vec2(0.0, -10.0), true);
 
-		var chainpoints = []
+		var chainpoints = [];
 		chainpoints.push([-70.0, -70.0]);
 		chainpoints.push([70.0, -70.0]);
 		chainpoints.push([70.0, 70.0]);
@@ -72,13 +72,13 @@ window.onload=function()
 		for(var i=0;i<100;++i)
 		{
 			var physobject;
-			if(i%2 == 0) physobject = PhysicsManager.CreateDynamicObject(circleshape);
+			if(i%2 === 0) physobject = PhysicsManager.CreateDynamicObject(circleshape);
 			else physobject = PhysicsManager.CreateDynamicObject(rectshape);
 			var xpos = Math.random()*138 - 69;
 			var ypos = Math.random()*138 - 69;
 			physobject.SetPosition(xpos, ypos);
 
-			if(i%2 == 0) EntityManager.AddDynamicEntity(new Circle, physobject);
+			if(i%2 === 0) EntityManager.AddDynamicEntity(new Circle(), physobject);
 			else EntityManager.AddDynamicEntity(new Rectangle(1.0, 1.0), physobject);
 		}
 
@@ -102,7 +102,7 @@ window.onload=function()
 			scrn.Draw();
 		})();
 		window.onresize=function(){scrn.ResizeCanvas();};
-		window.onmousewheel=function(e){handleMouseWheel(e,scrn);}
+		window.onmousewheel=function(e){handleMouseWheel(e,scrn);};
 	});
 
 	function rotateTowardMouse(e)
@@ -130,4 +130,3 @@ window.onload=function()
 			e.physicsObject.body.ApplyLinearImpulse(bvector, bcenter);
 	}
 };
-
