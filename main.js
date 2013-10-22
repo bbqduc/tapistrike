@@ -45,11 +45,12 @@ window.onload=function()
 
 	if(!gl) return;
 
+	var worker=new PhysicsWorker();
+
 	asyncWait([ShaderManager, TextureManager], function()
 	{
 		// initialize world
-		PhysicsManager.world = new Box2D.b2World(new Box2D.b2Vec2(0.0, -10.0), true);
-
+		/*
 		var chainpoints = [];
 		chainpoints.push([-70.0, -70.0]);
 		chainpoints.push([70.0, -70.0]);
@@ -57,23 +58,26 @@ window.onload=function()
 		chainpoints.push([-70.0, 70.0]);
 
 		createStaticChainEntity(chainpoints, true);
+		*/
 
+		/*
 		var trianglepoints = [];
 		trianglepoints.push([-5, 0]);
 		trianglepoints.push([0, -5]);
 		trianglepoints.push([15, 0]);
 		trianglepoints.push([0, 5]);
 		var e = createDynamicPolygonEntity(trianglepoints);
+		*/
 
 		// create entities
-		var circleshape = PhysicsManager.CreateDefaultFixtureDef(PhysicsManager.CreateCircleShape(1.0));
-		var rectshape = PhysicsManager.CreateDefaultFixtureDef(PhysicsManager.CreateSquareShape(1.0, 1.0));
+		var circleshape = worker.CreateDefaultFixtureDef(worker.CreateCircleShape(1.0));
+		var rectshape = worker.CreateDefaultFixtureDef(worker.CreateSquareShape(1.0, 1.0));
 
 		for(var i=0;i<100;++i)
 		{
 			var physobject;
-			if(i%2 === 0) physobject = PhysicsManager.CreateDynamicObject(circleshape);
-			else physobject = PhysicsManager.CreateDynamicObject(rectshape);
+			if(i%2 === 0) physobject = worker.CreateDynamicObject(circleshape);
+			else physobject = worker.CreateDynamicObject(rectshape);
 			var xpos = Math.random()*138 - 69;
 			var ypos = Math.random()*138 - 69;
 			physobject.SetPosition(xpos, ypos);
@@ -84,19 +88,8 @@ window.onload=function()
 
 		var scrn=new Screen(canvas, zoomoutlevel);
 
-		var prevt = window.performance.now();
 		(function draw()
 		{
-			var curt = window.performance.now();
-			var iterations = Math.floor((curt - prevt)*60/1000);
-			//console.log("Simulating " + iterations + " iterations.");
-			for(var i = 0; i < iterations; ++i)
-			{
-				rotateTowardMouse(e);
-				applyThrusters(e);
-				PhysicsManager.world.Step(1.0/60.0, 1, 1);
-			}
-			prevt = prevt + iterations*1000/60;
 			++framecount;
 			tdl.webgl.requestAnimationFrame(draw, canvas);
 			scrn.Draw();
@@ -105,28 +98,12 @@ window.onload=function()
 		window.onmousewheel=function(e){handleMouseWheel(e,scrn);};
 	});
 
-	function rotateTowardMouse(e)
-	{
-		var len = Math.sqrt(mouseX * mouseX + mouseY * mouseY);
-		var normX = mouseX / len;
-		var angle = Math.acos(normX); // desired angle
-		if(mouseY < 0) angle = 2*Math.PI - angle;
-		if(isNaN(angle)) angle=0;
-		var nextangle = e.physicsObject.GetAngle() + e.physicsObject.body.GetAngularVelocity() / 30.0;
-		var totrot = (angle - nextangle);
-		while(totrot < -Math.PI) totrot += 2*Math.PI;
-		while(totrot > Math.PI) totrot -= 2*Math.PI;
-		var velocity = totrot * 30;
-		var impulse = e.physicsObject.body.GetInertia() * velocity;
-		e.physicsObject.body.ApplyAngularImpulse(impulse);
-		//				e.physicsObject.SetAngle(angle);
-	}
-
+	/*
 	function applyThrusters(e)
 	{
 		var bcenter = e.physicsObject.body.GetWorldCenter();
 		var bvector = e.physicsObject.body.GetWorldVector(new Box2D.b2Vec2(100.0,0.0));
 		if(wdown)
 			e.physicsObject.body.ApplyLinearImpulse(bvector, bcenter);
-	}
+	}*/
 };

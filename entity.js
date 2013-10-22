@@ -6,8 +6,9 @@ function Entity(drawableobject, physicsobject) // this would probably be an abst
 {
 	this.model = drawableobject;
 	this.physicsObject = physicsobject;
+	this.id=Entity.id++;
 }
-
+Entity.id=0;
 Entity.prototype={
 	constructor: Entity,
 	PrepareUniforms: function(uniforms) // this should probably always be overridden

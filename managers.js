@@ -135,39 +135,3 @@ TextureManager.GetTexture=function(texname)
 	if(!tex) throw "Texture " + texname + " not found";
 	return tex;
 };
-
-function PhysicsManager(){}
-PhysicsManager.CreateStaticObject = function(fixturedef) // todo : maybe not the best interface design
-{
-	var bodydef = new Box2D.b2BodyDef();
-	var body = PhysicsManager.world.CreateBody(bodydef);
-	return new PhysicsObject(body, fixturedef);
-};
-PhysicsManager.CreateDynamicObject = function(fixturedef) // todo : maybe not the best interface design
-{
-	var bodydef = new Box2D.b2BodyDef();
-	bodydef.set_type(Box2D.b2_dynamicBody);
-	var body = PhysicsManager.world.CreateBody(bodydef);
-	return new PhysicsObject(body, fixturedef);
-};
-PhysicsManager.CreateCircleShape = function(radius)
-{
-	var shape = new Box2D.b2CircleShape();
-	shape.set_m_p(new Box2D.b2Vec2(0.0, 0.0));
-	shape.set_m_radius(radius);
-	return shape;
-};
-PhysicsManager.CreateSquareShape = function(width, height)
-{
-	var shape = new Box2D.b2PolygonShape();
-	shape.SetAsBox(width, height);
-	return shape;
-};
-PhysicsManager.CreateDefaultFixtureDef = function(shape)
-{
-	var fixturedef = new Box2D.b2FixtureDef();
-	fixturedef.set_shape(shape);
-	fixturedef.set_friction(0.3);
-	fixturedef.set_density(1);
-	return fixturedef;
-};
