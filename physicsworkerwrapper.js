@@ -8,6 +8,7 @@ function PhysicsWorkerObject(worker, id) {
 }
 PhysicsWorkerObject.id=0;
 PhysicsWorkerObject.prototype={
+	/*
 	GetX: function()
 	{
 		this.worker.postMessage({msg: "GetX", args: [], id: this.id});
@@ -19,7 +20,7 @@ PhysicsWorkerObject.prototype={
 	GetAngle: function()
 	{
 		this.worker.postMessage({msg: "GetAngle", args: [], id: this.id});
-	},
+	},*/
 	SetAngle: function(angle)
 	{
 		this.worker.postMessage({msg: "SetAngle", args: [angle], id: this.id});

@@ -7,7 +7,7 @@ function EntityManager() {}
 EntityManager.entities=[];
 EntityManager.AddConstructedEntity = function(entity)
 {
-	EntityManager.entities.push(entity);
+	EntityManager.entities[entity.id]=entity;
 	return entity;
 };
 EntityManager.AddEntity = function(drawableObject, physicsobject)
@@ -135,3 +135,5 @@ TextureManager.GetTexture=function(texname)
 	if(!tex) throw "Texture " + texname + " not found";
 	return tex;
 };
+
+var PhysicsState=null;

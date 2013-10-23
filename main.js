@@ -48,7 +48,14 @@ window.onload=function()
 	var worker=new PhysicsWorker();
 	worker.physicsWorker.onmessage=function(e)
 	{
-		if(typeof e.data === "string") console.log(e.data);
+		if(typeof e.data === "string")
+		{// Debug message
+			console.log(e.data);
+		}
+		else
+		{// State update
+			PhysicsState=e.data.buffers;
+		}
 	};
 
 	asyncWait([ShaderManager, TextureManager], function()

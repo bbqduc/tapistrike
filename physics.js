@@ -12,31 +12,40 @@ function PhysicsObject(body, fixturedef) // todo : maybe need some redesign here
 PhysicsObject.prototype = {
 	GetX : function()
 	{
+		return this.body.GetPosition().get_x();
+		/*
 		var x=this.body.GetPosition().get_x();
 		if(x!==this.prevx)
 		{
 			self.postMessage({msg: "GetX", args: [x]});
 			this.prevx=x;
 		}
+		*/
 
 	},
 	GetY : function()
 	{
+		return this.body.GetPosition().get_y();
+		/*
 		var y=this.body.GetPosition().get_y();
 		if(y!==this.prevy)
 		{
 			self.postMessage({msg: "GetY", args: [y]});
 			this.prevy=y;
 		}
+		*/
 	},
 	GetAngle : function()
 	{
+		return this.body.GetAngle();
+		/*
 		var a=this.body.GetAngle();
 		if(a!==this.preva)
 		{
 			self.postMessage({msg: "GetAngle", args: [a]});
 			this.preva=a;
 		}
+		*/
 	},
 	SetAngle : function(angle)
 	{

@@ -4,7 +4,7 @@ self.importScripts("box2d.js");
 self.importScripts("physics.js");
 
 function PhysicsManager(){}
-PhysicsManager.Objects={};
+PhysicsManager.Objects=[];
 PhysicsManager.CreateStaticObject = function(fixturedef) // todo : maybe not the best interface design
 {
 	var bodydef = new Box2D.b2BodyDef();
@@ -40,10 +40,12 @@ PhysicsManager.CreateDefaultFixtureDef = function(shape)
 	return fixturedef;
 };
 
+
+var prevt = self.performance.now();
 function tick()
 {
-	//var curt = self.performance.now();
-	var iterations = 1;//Math.floor((curt - prevt)*60/1000);
+	var curt = self.performance.now();
+	var iterations = Math.floor((curt - prevt)*60/1000);
 	//console.log("Simulating " + iterations + " iterations.");
 	for(var i = 0; i < iterations; ++i)
 	{
@@ -51,8 +53,19 @@ function tick()
 		//applyThrusters(e);
 		PhysicsManager.world.Step(1.0/60.0, 1, 1);
 	}
-	//prevt = prevt + iterations*1000/60;
-	//postMessage("Stepping...");
+	var len=PhysicsManager.Objects.length;
+	var obj={
+		buffers: new Float32Array(3*len)
+	};
+	for(var i=0; i<len; ++i)
+	{
+		var physobj=PhysicsManager.Objects[i];
+		obj.buffers[i*3]=(physobj.GetX());
+		obj.buffers[i*3+1]=(physobj.GetY());
+		obj.buffers[i*3+2]=(physobj.GetAngle());
+	}
+	prevt = prevt + iterations*1000/60;
+	postMessage(obj, [obj.buffers.buffer]);
 	setTimeout(tick, 1000/60);
 }
 
@@ -84,5 +97,3 @@ self.addEventListener("message", function(e)
 			break;
 	}
 }, false);
-
-//var prevt = self.performance.now();
