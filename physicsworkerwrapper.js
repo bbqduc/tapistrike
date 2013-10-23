@@ -6,30 +6,31 @@ function PhysicsWorkerObject(worker, id) {
 	this.position={x: 0, y: 0};
 	this.angle=0;
 }
+PhysicsWorkerObject.id=0;
 PhysicsWorkerObject.prototype={
 	GetX: function()
 	{
-		return this.position.x;
+		this.worker.postMessage({msg: "GetX", args: [], id: this.id});
 	},
 	GetY: function()
 	{
-		return this.position.y;
+		this.worker.postMessage({msg: "GetY", args: [], id: this.id});
 	},
 	GetAngle: function()
 	{
-		return this.angle;
+		this.worker.postMessage({msg: "GetAngle", args: [], id: this.id});
 	},
 	SetAngle: function(angle)
 	{
-		this.worker.postMessage({msg: "SetAngle", args: arguments, id: this.id});
+		this.worker.postMessage({msg: "SetAngle", args: [angle], id: this.id});
 	},
 	SetPosition: function(x,y)
 	{
-		this.worker.postMessage({msg: "SetPosition", args: arguments, id: this.id});
+		this.worker.postMessage({msg: "SetPosition", args: [x,y], id: this.id});
 	},
 	SetTransform: function(x,y,angle)
 	{
-		this.worker.postMessage({msg: "SetTransform", args: arguments, id: this.id});
+		this.worker.postMessage({msg: "SetTransform", args: [x,y,angle], id: this.id});
 	}
 };
 
@@ -39,8 +40,9 @@ function PhysicsWorker()
 	this.physicsWorker.postMessage({msg: "init"});
 }
 PhysicsWorker.prototype={
-	CreateStaticObject: function(fixturedef, id) // todo : maybe not the best interface design
+	CreateStaticObject: function(fixturedef) // todo : maybe not the best interface design
 	{
+		var id=PhysicsWorkerObject.id++;
 		this.physicsWorker.postMessage({
 			id: id,
 			msg: "CreateStaticObject",
@@ -48,10 +50,11 @@ PhysicsWorker.prototype={
 			shapeFunc: fixturedef.shape.func,
 			shapeArgs: fixturedef.shape.args
 		});
-		return new PhysicsWorkerObject(this,id);
+		return new PhysicsWorkerObject(this.physicsWorker,id);
 	},
-	CreateDynamicObject: function(fixturedef, id) // todo : maybe not the best interface design
+	CreateDynamicObject: function(fixturedef) // todo : maybe not the best interface design
 	{
+		var id=PhysicsWorkerObject.id++;
 		this.physicsWorker.postMessage({
 			id: id,
 			msg: "CreateDynamicObject",
@@ -64,15 +67,15 @@ PhysicsWorker.prototype={
 	CreateCircleShape: function(radius)
 	{
 		return {
-			func: "CreateSquareShape",
-			args: arguments
+			func: "CreateCircleShape",
+			args: [radius]
 		};
 	},
 	CreateSquareShape: function(width, height)
 	{
 		return {
 			func: "CreateSquareShape",
-			args: arguments
+			args: [width,height]
 		};
 	},
 	CreateDefaultFixtureDef: function(shape)

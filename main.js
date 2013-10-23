@@ -46,6 +46,10 @@ window.onload=function()
 	if(!gl) return;
 
 	var worker=new PhysicsWorker();
+	worker.physicsWorker.onmessage=function(e)
+	{
+		if(typeof e.data === "string") console.log(e.data);
+	};
 
 	asyncWait([ShaderManager, TextureManager], function()
 	{

@@ -1,4 +1,8 @@
 "use strict";
+
+self.importScripts("box2d.js");
+self.importScripts("physics.js");
+
 function PhysicsManager(){}
 PhysicsManager.Objects={};
 PhysicsManager.CreateStaticObject = function(fixturedef) // todo : maybe not the best interface design
@@ -36,34 +40,10 @@ PhysicsManager.CreateDefaultFixtureDef = function(shape)
 	return fixturedef;
 };
 
-self.addEventListener("message", function(e)
-{
-	switch(e.msg)
-	{
-		case "init":
-			PhysicsManager.world = new Box2D.b2World(new Box2D.b2Vec2(0.0, -10.0), true);
-			break;
-		case "CreateDynamicObject":
-			var shape=PhysicsManager[e.shapeFunc].call(e.shapeArgs);
-			var fixture=PhysicsManager[e.fixtureFunc](shape);
-			PhysicsManager[e.id]=PhysicsManager.CreateDynamicObject(fixture);
-			break;
-		case "CreateStaticObject":
-			var shape=PhysicsManager[e.shapeFunc].call(e.shapeArgs);
-			var fixture=PhysicsManager[e.fixtureFunc](shape);
-			PhysicsManager[e.id]=PhysicsManager.CreateStaticObject(fixture);
-			break;
-		default:
-			PhysicsManager[e.id][e.msg].call(e.args);
-			break;
-	}
-}, false);
-
-var prevt = window.performance.now();
 function tick()
 {
-	var curt = window.performance.now();
-	var iterations = Math.floor((curt - prevt)*60/1000);
+	//var curt = self.performance.now();
+	var iterations = 1;//Math.floor((curt - prevt)*60/1000);
 	//console.log("Simulating " + iterations + " iterations.");
 	for(var i = 0; i < iterations; ++i)
 	{
@@ -71,8 +51,38 @@ function tick()
 		//applyThrusters(e);
 		PhysicsManager.world.Step(1.0/60.0, 1, 1);
 	}
-	prevt = prevt + iterations*1000/60;
-	//postMessage("tick", 
+	//prevt = prevt + iterations*1000/60;
+	//postMessage("Stepping...");
 	setTimeout(tick, 1000/60);
 }
-setTimeout(tick, 1000/60);
+
+self.addEventListener("message", function(e)
+{
+	var e=e.data;
+	switch(e.msg)
+	{
+		case "init":
+			PhysicsManager.world = new Box2D.b2World(new Box2D.b2Vec2(0.0, -10.0), true);
+			self.postMessage("World intialized");
+			setTimeout(tick, 1000/60);
+			break;
+		case "CreateDynamicObject":
+			var shape=PhysicsManager[e.shapeFunc].apply(self, e.shapeArgs);
+			var fixture=PhysicsManager[e.fixtureFunc](shape);
+			PhysicsManager.Objects[e.id]=PhysicsManager.CreateDynamicObject(fixture);
+			self.postMessage("DynamicObject " + e.id + " created.");
+			break;
+		case "CreateStaticObject":
+			var shape=PhysicsManager[e.shapeFunc].apply(self, e.shapeArgs);
+			var fixture=PhysicsManager[e.fixtureFunc](shape);
+			PhysicsManager.Objects[e.id]=PhysicsManager.CreateStaticObject(fixture);
+			self.postMessage("StaticObject " + e.id + " created.");
+			break;
+		default:
+			var obj=PhysicsManager.Objects[e.id];
+			obj[e.msg].apply(obj, e.args);
+			break;
+	}
+}, false);
+
+//var prevt = self.performance.now();
